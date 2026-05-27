@@ -13,7 +13,9 @@ import {
   discardCardFromPlayerHand,
   joinRoom,
   leaveRoom,
+  payDebtTokenOnBoard,
   placeCardOnPlayerBoard,
+  returnBoardCardToPlayerHand,
   reconnectRoom,
   setPlayerReady,
   startGame,
@@ -243,6 +245,42 @@ io.on("connection", (socket) => {
     }
 
     const error = discardCardFromPlayerHand(state, payload);
+
+    if (error) {
+      socket.emit("game:error", { message: error });
+      return;
+    }
+
+    emitRoomState(payload.roomId);
+  });
+
+  socket.on("planning:payDebt", (payload) => {
+    const state = rooms.get(payload.roomId);
+
+    if (!state) {
+      socket.emit("game:error", { message: "Không tìm thấy phòng." });
+      return;
+    }
+
+    const error = payDebtTokenOnBoard(state, payload);
+
+    if (error) {
+      socket.emit("game:error", { message: error });
+      return;
+    }
+
+    emitRoomState(payload.roomId);
+  });
+
+  socket.on("planning:returnBoardCard", (payload) => {
+    const state = rooms.get(payload.roomId);
+
+    if (!state) {
+      socket.emit("game:error", { message: "Không tìm thấy phòng." });
+      return;
+    }
+
+    const error = returnBoardCardToPlayerHand(state, payload);
 
     if (error) {
       socket.emit("game:error", { message: error });

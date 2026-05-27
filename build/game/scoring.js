@@ -44,6 +44,20 @@ export function calculateScoreBreakdown({ placedCards, getBoardDisplayName, }) {
         lines,
     };
 }
+function getBoardTokenType(card) {
+    var _a;
+    return (_a = card === null || card === void 0 ? void 0 : card.boardTokenType) !== null && _a !== void 0 ? _a : null;
+}
+function isDebtTokenCard(card) {
+    return getBoardTokenType(card) === "debt";
+}
+function isLockTokenCard(card) {
+    return getBoardTokenType(card) === "lock";
+}
+function getDebtTokenAmount(card) {
+    var _a;
+    return (_a = card === null || card === void 0 ? void 0 : card.debtAmount) !== null && _a !== void 0 ? _a : 0;
+}
 export function buildSimulationReplaySteps({ boardSlots, currentDayIndex, dayLabel, rows, getCardTagKeys, countCardsWithTag, getCurrentDayPlacedCards, }) {
     var _a, _b, _c, _d;
     const steps = [];
@@ -72,6 +86,49 @@ export function buildSimulationReplaySteps({ boardSlots, currentDayIndex, dayLab
                 coinDelta: 0,
                 staminaDelta: 0,
                 isEmpty: true,
+            });
+            continue;
+        }
+        /*
+          Token nợ / khóa không phải địa điểm thật.
+          Vì vậy:
+          - Không roll random event.
+          - Không check khoảng cách > 20km.
+          - Không cập nhật previousCard.
+        */
+        if (isDebtTokenCard(card)) {
+            const debtPenalty = -20;
+            daySummary.vp += debtPenalty;
+            daySummary.steps += 1;
+            steps.push({
+                id: card.id,
+                dayIndex,
+                rowIndex,
+                dayLabel,
+                timeLabel,
+                title: "Token nợ",
+                subtitle: `Nợ tiền ${getDebtTokenAmount(card)} xu`,
+                vpDelta: debtPenalty,
+                coinDelta: 0,
+                staminaDelta: 0,
+                isDebtPenalty: true,
+                isBoardToken: true,
+            });
+            continue;
+        }
+        if (isLockTokenCard(card)) {
+            steps.push({
+                id: card.id,
+                dayIndex,
+                rowIndex,
+                dayLabel,
+                timeLabel,
+                title: "Bị khóa",
+                subtitle: "Kiệt sức, không thể xếp hoạt động.",
+                vpDelta: 0,
+                coinDelta: 0,
+                staminaDelta: 0,
+                isBoardToken: true,
             });
             continue;
         }
@@ -135,7 +192,9 @@ export function calculateSimulationResult({ boardSlots, currentDayIndex, dayLabe
         countCardsWithTag,
         getCurrentDayPlacedCards,
     });
-    const debtPenalty = 0;
+    const debtPenalty = replaySteps.reduce((sum, step) => {
+        return step.isDebtPenalty ? sum + Math.abs(step.vpDelta) : sum;
+    }, 0);
     const eventModifier = replaySteps.reduce((sum, step) => {
         var _a;
         if (step.eventType === "promo" || step.eventType === "storm") {
@@ -180,8 +239,7 @@ export function calculateSimulationResult({ boardSlots, currentDayIndex, dayLabe
     }, 0);
     const comboOnlyVP = breakdown.bonusVP;
     const finalVP = replayBaseAndEventVP +
-        comboOnlyVP -
-        debtPenalty;
+        comboOnlyVP;
     return Object.assign(Object.assign({}, breakdown), { debtPenalty,
         eventModifier,
         distancePenalty,

@@ -13,7 +13,9 @@ import {
   registerAccount,
   selectOnlineDraftCard,
   sendDiscardCard,
+  sendPayDebt,
   sendPlaceCard,
+  sendReturnBoardCard,
   setOnlineReady,
   startOnlineGame,
 } from "./online/socketClient.js";
@@ -78,6 +80,10 @@ import {
   getRemainingResources as getRemainingResourcesFromTotals,
 } from "./game/resources.js";
 const app = document.getElementById("app")!;
+
+const DRAFT_STARTING_POOL_SIZE = 7;
+const DRAFT_PICK_TARGET = HAND_SIZE;
+
 
 /* =========================================
    GAME AUDIO ENGINE
@@ -1239,11 +1245,40 @@ function createCardFromPublicBoardCell(cell: {
   vp: number;
   coin?: number;
   stamina?: number;
+  image?: string;
+  type?: "card" | "debt" | "lock";
+  debtAmount?: number;
+  lockedReason?: string;
+  sourceCardName?: string;
 }): TravelCardData {
   const knownCard = getKnownOnlineCardById(cell.cardId);
 
-  if (knownCard) {
+  if (knownCard && !cell.type) {
     return knownCard;
+  }
+
+  if (cell.type === "debt") {
+    return {
+      ...createDebtTokenCard({
+        rowIndex: 0,
+        colIndex: 0,
+        amount: cell.debtAmount ?? 0,
+        sourceCardName: cell.sourceCardName ?? cell.name ?? "Lá đã vay",
+        lockedReason: cell.lockedReason,
+      }),
+      id: cell.cardId,
+    } as BoardTokenCard;
+  }
+
+  if (cell.type === "lock") {
+    return {
+      ...createExhaustLockTokenCard({
+        rowIndex: 0,
+        colIndex: 0,
+        sourceCardName: cell.sourceCardName ?? cell.name ?? "Lá đã vay thể lực",
+      }),
+      id: cell.cardId,
+    } as BoardTokenCard;
   }
 
   const fallbackName = cell.name ?? cell.cardId;
@@ -1255,7 +1290,7 @@ function createCardFromPublicBoardCell(cell: {
     shortName: fallbackName,
     city: "",
     shortCity: "",
-    image: images.food,
+    image: cell.image ?? images.food,
     rarity: "common",
     rarityLabel: "★",
     vp: cell.vp,
@@ -1343,14 +1378,13 @@ function applyOnlineRoomStateToLocal() {
       shouldActivateOnlinePassAnimation = false;
       isInitialDealInProgress = true;
       isPassingDraftCards = false;
+      hasPlayedOnlinePlanningDealAfterDraft = false;
 
       playGameSound("deal");
 
       onlineDraftAnimationTimerId = window.setTimeout(() => {
-        isInitialDealInProgress = false;
-        onlineDraftAnimationTimerId = null;
-        updateDraftSelectedVisualOnly();
-      }, 1080);
+        finishOnlineDraftDealVisualOnly();
+      }, 1320);
     } else if (serverPoolChanged && hasDisplayPool && displayPoolSignature !== onlinePoolSignature) {
       clearOnlineDraftAnimationTimer();
 
@@ -1381,16 +1415,54 @@ function applyOnlineRoomStateToLocal() {
         activateDraftDealAnimation();
 
         onlineDraftAnimationTimerId = window.setTimeout(() => {
-          isInitialDealInProgress = false;
-          onlineDraftAnimationTimerId = null;
-          updateDraftSelectedVisualOnly();
-        }, 1080);
-      }, 980);
+          finishOnlineDraftDealVisualOnly();
+        }, 1320);
+      }, 1500);
     } else if (state.phase === "draft" && !hasDisplayPool) {
       setOnlineDraftDisplayPoolFromServer();
     }
 
-    if (state.phase !== "draft") {
+    const isEnteringPlanningAfterDraft =
+      state.phase === "planning" &&
+      lastOnlineAnimationPhase === "draft" &&
+      onlineDraftDisplayPool !== null &&
+      onlineDraftDisplayPool.length > 0 &&
+      !isOnlineFinalDraftReturnAnimating &&
+      onlineFinalDraftReturnTimerId === null;
+
+    if (isEnteringPlanningAfterDraft) {
+      /*
+        Lượt draft cuối: server đã chuyển sang planning, nhưng client giữ lại
+        2 lá dư trong onlineDraftDisplayPool thêm 1 nhịp để chạy animation:
+        gom bài -> bay vào deck. Không xóa display pool ngay.
+      */
+      clearOnlineDraftAnimationTimer();
+
+      isOnlineFinalDraftReturnAnimating = true;
+      isDraftPhase = true;
+      isSimulationMode = false;
+      isPassingDraftCards = true;
+      isInitialDealInProgress = false;
+      shouldActivateOnlinePassAnimation = true;
+      shouldActivateOnlineDealAnimation = false;
+
+      onlineFinalDraftReturnTimerId = window.setTimeout(() => {
+        isOnlineFinalDraftReturnAnimating = false;
+        isPassingDraftCards = false;
+        onlineDraftDisplayPool = null;
+        onlineDraftPendingPool = null;
+        onlineFinalDraftReturnTimerId = null;
+        lastOnlineRenderSignature = "";
+
+        /*
+          Sau khi 2 lá dư gom và bay về deck, mới hiện hand planning
+          bằng animation chia bài bình thường.
+        */
+        playOnlinePlanningHandDealAfterDraft();
+      }, 1550);
+    }
+
+    if (state.phase !== "draft" && !isOnlineFinalDraftReturnAnimating) {
       clearOnlineDraftAnimationTimer();
 
       onlineDraftDisplayPool = null;
@@ -1406,7 +1478,19 @@ function applyOnlineRoomStateToLocal() {
     lastOnlineAnimationPoolSignature = onlinePoolSignature;
   }
 
-  if (state.phase === "planning") {
+  const shouldPlayPlanningDealFallback =
+    isOnlineRoomActive() &&
+    state.phase === "planning" &&
+    lastOnlineAnimationPhase === "draft" &&
+    !isOnlineFinalDraftReturnAnimating &&
+    !hasPlayedOnlinePlanningDealAfterDraft;
+
+  if (shouldPlayPlanningDealFallback) {
+    playOnlinePlanningHandDealAfterDraft();
+    return;
+  }
+
+  if (state.phase === "planning" && !isOnlineFinalDraftReturnAnimating) {
     const onlineHand = getOnlineSelfHand();
 
     if (onlineHand) {
@@ -1975,6 +2059,181 @@ function getBoardDisplayCity(card: TravelCardData) {
   return card.shortCity?.trim() || card.city;
 }
 
+type BoardTokenCard = TravelCardData & {
+  boardTokenType?: "debt" | "lock";
+  debtAmount?: number;
+  lockedReason?: string;
+  sourceCardName?: string;
+};
+
+function getBoardTokenType(card: TravelCardData | null) {
+  return (card as BoardTokenCard | null)?.boardTokenType ?? null;
+}
+
+function isBoardDebtToken(card: TravelCardData | null) {
+  return getBoardTokenType(card) === "debt";
+}
+
+function isBoardLockToken(card: TravelCardData | null) {
+  return getBoardTokenType(card) === "lock";
+}
+
+function canPlaceOnBoardCell(rowIndex: number, colIndex: number) {
+  const cell = getBoardSlots()[rowIndex]?.[colIndex] ?? null;
+
+  return cell === null || isBoardDebtToken(cell);
+}
+
+function createDebtTokenCard(params: {
+  rowIndex: number;
+  colIndex: number;
+  amount: number;
+  sourceCardName: string;
+  lockedReason?: string;
+}): TravelCardData {
+  return {
+    id: `debt_token_${params.rowIndex}_${params.colIndex}_${Date.now()}`,
+    name: params.lockedReason ? "Nợ + Kiệt sức" : "Token Nợ",
+    shortName: params.lockedReason ? "Nợ + Kiệt sức" : "Token Nợ",
+    city: `Trả ${params.amount} xu`,
+    shortCity: `Trả ${params.amount} xu`,
+    image: images.food,
+    rarity: "common",
+    rarityLabel: "!",
+    vp: 0,
+    coin: 0,
+    stamina: 0,
+    tag: "utility",
+    tagLabel: "Nợ",
+    tags: ["UTILITY"],
+    icon: "💸",
+    description: `Bấm để trả ${params.amount} xu. Nếu không trả trước khi hết ngày sẽ bị -20 VP.`,
+    bonusText: "Không trả nợ: -20 VP",
+    boardTokenType: "debt",
+    debtAmount: params.amount,
+    lockedReason: params.lockedReason,
+    sourceCardName: params.sourceCardName,
+  } as BoardTokenCard;
+}
+
+function createExhaustLockTokenCard(params: {
+  rowIndex: number;
+  colIndex: number;
+  sourceCardName: string;
+}): TravelCardData {
+  return {
+    id: `exhaust_lock_${params.rowIndex}_${params.colIndex}_${Date.now()}`,
+    name: "Bị khóa",
+    shortName: "Bị khóa",
+    city: "Kiệt sức",
+    shortCity: "Kiệt sức",
+    image: images.food,
+    rarity: "common",
+    rarityLabel: "!",
+    vp: 0,
+    coin: 0,
+    stamina: 0,
+    tag: "utility",
+    tagLabel: "Khóa",
+    tags: ["UTILITY"],
+    icon: "🔒",
+    description: `Ô này bị khóa vì đã vay thể lực ở ${params.sourceCardName}.`,
+    bonusText: "Không thể xếp bài vào ô này.",
+    boardTokenType: "lock",
+    lockedReason: "Kiệt sức",
+    sourceCardName: params.sourceCardName,
+  } as BoardTokenCard;
+}
+
+function addLocalDebtOrExhaustToken(params: {
+  rowIndex: number;
+  card: TravelCardData;
+  coinDebt: number;
+  staminaDebt: number;
+}) {
+  const nextDayIndex = currentDayIndex + 1;
+
+  if (nextDayIndex >= PHASE_DAYS) return;
+  if (getBoardSlots()[params.rowIndex]?.[nextDayIndex] !== null) return;
+
+  if (params.coinDebt > 0) {
+    getBoardSlots()[params.rowIndex][nextDayIndex] = createDebtTokenCard({
+      rowIndex: params.rowIndex,
+      colIndex: nextDayIndex,
+      amount: params.coinDebt,
+      sourceCardName: params.card.name,
+      lockedReason: params.staminaDebt > 0 ? "Kiệt sức" : undefined,
+    });
+    return;
+  }
+
+  if (params.staminaDebt > 0) {
+    getBoardSlots()[params.rowIndex][nextDayIndex] = createExhaustLockTokenCard({
+      rowIndex: params.rowIndex,
+      colIndex: nextDayIndex,
+      sourceCardName: params.card.name,
+    });
+  }
+}
+
+function payLocalDebtToken(rowIndex: number, colIndex: number, card: TravelCardData) {
+  const token = card as BoardTokenCard;
+  const debtAmount = token.debtAmount ?? 0;
+  const remaining = getRemainingResources();
+
+  if (debtAmount <= 0) return;
+
+  if (remaining.coin < debtAmount) {
+    alert(`Không đủ xu để trả nợ. Cần ${debtAmount} xu.`);
+    return;
+  }
+
+  eventResourceModifier = {
+    ...eventResourceModifier,
+    coin: eventResourceModifier.coin - debtAmount,
+  };
+
+  getBoardSlots()[rowIndex][colIndex] = null;
+  playGameSound("eventPromo");
+  rerenderArena();
+}
+
+function payDebtToken(rowIndex: number, colIndex: number, card: TravelCardData) {
+  if (colIndex !== currentDayIndex) {
+    focusedBoardCard = card;
+    focusedBoardPosition = { rowIndex, colIndex };
+    rerenderArena();
+    return;
+  }
+
+  if (isOnlineRoomActive()) {
+    sendPayDebt({
+      rowIndex,
+      colIndex,
+    });
+    return;
+  }
+
+  payLocalDebtToken(rowIndex, colIndex, card);
+}
+
+function clearLocalGeneratedTokenForReturnedCard(rowIndex: number, colIndex: number, card: TravelCardData) {
+  const nextDayIndex = colIndex + 1;
+
+  if (nextDayIndex >= PHASE_DAYS) return;
+
+  const nextCell = getBoardSlots()[rowIndex]?.[nextDayIndex] ?? null;
+  const token = nextCell as BoardTokenCard | null;
+
+  if (
+    token &&
+    (token.boardTokenType === "debt" || token.boardTokenType === "lock") &&
+    token.sourceCardName === card.name
+  ) {
+    getBoardSlots()[rowIndex][nextDayIndex] = null;
+  }
+}
+
 function getFocusedTitleClass(name: string) {
   return getTextFitClass(name, "focused-card__name", 18, 25);
 }
@@ -2062,6 +2321,32 @@ function renderBoardMiniCard(card: TravelCardData, replayStep?: SimulationReplay
   const nameClass = getBoardTitleClass(displayName);
   const cityClass = getBoardCityClass(displayCity);
   const bonusActive = isCardBonusActive(card);
+  const token = card as BoardTokenCard;
+
+  if (token.boardTokenType === "debt") {
+    return `
+      <article
+        class="board-mini board-mini--token board-mini--debt"
+        title="Bấm để trả ${token.debtAmount ?? 0} xu"
+      >
+        <div class="board-mini-token__icon">💸</div>
+        <strong>Nợ tiền ${token.debtAmount ?? 0} xu</strong>
+      </article>
+    `;
+  }
+
+  if (token.boardTokenType === "lock") {
+    return `
+      <article
+        class="board-mini board-mini--token board-mini--lock"
+        title="Ô bị khóa vì kiệt sức"
+      >
+        <div class="board-mini-token__icon">🔒</div>
+        <strong>Bị khóa kiệt sức</strong>
+      </article>
+    `;
+  }
+
   const eventClass = replayStep?.eventType ? `board-mini--event-${replayStep.eventType}` : "";
   const eventIcon =
     replayStep?.eventType === "promo"
@@ -2077,7 +2362,7 @@ function renderBoardMiniCard(card: TravelCardData, replayStep?: SimulationReplay
     replayStep?.eventType === "promo"
       ? `+${replayStep.eventVpDelta ?? 0} VP Event`
       : replayStep?.eventType === "traffic"
-        ? `${replayStep.eventStaminaDelta ?? 0} Lực`
+        ? `${replayStep.eventStaminaDelta ?? 0} Thể lực`
         : replayStep?.eventType === "storm"
           ? `${replayStep.eventVpDelta ?? 0} VP Event`
           : replayStep?.eventType === "distance"
@@ -2105,15 +2390,18 @@ function renderBoardMiniCard(card: TravelCardData, replayStep?: SimulationReplay
           : ""
       }
 
-      <div class="board-mini__vp">★ ${card.vp}</div>
+      <div
+        class="board-mini__image"
+        style="background-image: url('${card.image}'), url('${images.food}')"
+      ></div>
+
+      <div class="board-mini__tag board-mini__tag--${card.tag}">
+        ${card.tagLabel}
+      </div>
 
       <div class="board-mini__info">
         <h3 class="${nameClass}">${displayName}</h3>
-        <div class="${cityClass}">📍 ${displayCity}</div>
-
-        <div class="board-mini__tag board-mini__tag--${card.tag}">
-          ${card.tagLabel}
-        </div>
+        <div class="board-mini__vp">★ ${card.vp}</div>
       </div>
     </article>
   `;
@@ -2124,8 +2412,10 @@ function renderHandCard(card: TravelCardData, index: number) {
   const isPlanningSelected = !isDraftPhase && card.id === selectedHandCardId;
   const isSelected = isDraftSelected || isPlanningSelected;
   const affordability = getCardAffordability(card);
-  const affordabilityMessage = getCardAffordabilityMessage(card);
-  const unaffordableClass = affordability.canAfford ? "" : "hand-card--unaffordable";
+  const affordabilityMessage = affordability.canAfford
+    ? getCardAffordabilityMessage(card)
+    : "Thiếu tài nguyên: đặt lá này sẽ tạo nợ / kiệt sức.";
+  const unaffordableClass = "";
 
   return `
     <article
@@ -2133,8 +2423,8 @@ function renderHandCard(card: TravelCardData, index: number) {
       data-hand-card-id="${card.id}"
       style="${isSelected ? "box-shadow: 0 0 0 4px rgba(255,255,255,.95), 0 0 0 8px rgba(139,92,246,.82), 0 18px 34px rgba(75,47,25,.28);" : ""}"
       title="${affordabilityMessage}"
-      onpointerdown="event.stopPropagation(); ${isDraftPhase ? `` : `startHandPointerDrag(event, '${card.id}')`}"
-      onclick="event.stopPropagation(); ${isDraftPhase ? `window['selectDraftCard']('${card.id}')` : `window['selectHandCard']('${card.id}')`}"
+      onpointerdown="${isDraftPhase ? `` : `event.stopPropagation(); startHandPointerDrag(event, '${card.id}')`}"
+      onclick="${isDraftPhase ? `` : `event.stopPropagation(); window['selectHandCard']('${card.id}')`}"
     >
       ${
         isPlanningSelected
@@ -2144,12 +2434,6 @@ function renderHandCard(card: TravelCardData, index: number) {
               title="Hủy chọn"
             >×</button>`
           : ""
-      }
-
-      ${
-        affordability.canAfford
-          ? ""
-          : `<div class="hand-card__resource-warning">${affordabilityMessage}</div>`
       }
 
       <div class="hand-card__header">
@@ -2288,7 +2572,7 @@ function renderDraftHandTopMeta() {
             isInitialDealInProgress
               ? "Đang phát bài vào tay..."
               : isPassingDraftCards
-                ? "Đang chuyền 4 lá còn lại vào lượt kế tiếp..."
+                ? "Đang chuyền bài còn lại vào lượt kế tiếp..."
                 : selectedCard
                   ? "Đã chọn. Hết giờ mới chuyền bài."
                   : activePool.length > 0
@@ -2473,7 +2757,7 @@ function createDailyDraftPlayers(): DraftPlayerState[] {
   const result = createDailyDraftPlayersFromDeck({
     deck,
     initialDeck,
-    handSize: HAND_SIZE,
+    handSize: DRAFT_STARTING_POOL_SIZE,
     playerCount: PLAYER_COUNT,
     shuffleCards,
   });
@@ -2573,7 +2857,21 @@ function completeDailyDraftPhase() {
 
   const currentPlayer = getCurrentDraftPlayer();
 
-  playerHand = currentPlayer ? [...currentPlayer.picked] : [];
+  /*
+    Draft 7 pick 5:
+    - Người chơi giữ đúng 5 lá đã pick.
+    - 2 lá dư trong pool được trả lại deck và shuffle lại.
+  */
+  const leftoverDraftCards = draftPlayers.reduce<TravelCardData[]>((cards, player) => {
+    cards.push(...player.pool);
+    return cards;
+  }, []);
+
+  if (leftoverDraftCards.length > 0) {
+    deck = shuffleCards([...deck, ...leftoverDraftCards]);
+  }
+
+  playerHand = currentPlayer ? currentPlayer.picked.slice(0, DRAFT_PICK_TARGET) : [];
 
   isDraftPhase = false;
   isPassingDraftCards = false;
@@ -2625,7 +2923,11 @@ function finishDraftPick(cardId: string | null) {
   window.setTimeout(() => {
     const currentPlayer = getCurrentDraftPlayer();
 
-    if (!currentPlayer || currentPlayer.pool.length === 0) {
+    /*
+      Draft mới: phát 7 lá, nhưng chỉ pick đủ 5 lá.
+      Khi đã đủ 5 lá thì trả 2 lá dư còn lại về deck, không cần draft tới khi pool rỗng.
+    */
+    if (!currentPlayer || currentPlayer.picked.length >= DRAFT_PICK_TARGET) {
       completeDailyDraftPhase();
       return;
     }
@@ -2645,7 +2947,7 @@ function finishDraftPick(cardId: string | null) {
 function autoPickDraftCard() {
   const currentPlayer = getCurrentDraftPlayer();
 
-  if (!currentPlayer || currentPlayer.pool.length === 0) {
+  if (!currentPlayer || currentPlayer.picked.length >= DRAFT_PICK_TARGET) {
     completeDailyDraftPhase();
     return;
   }
@@ -2655,7 +2957,7 @@ function autoPickDraftCard() {
 
 function getDraftStatusText() {
   if (isPassingDraftCards) {
-    return "Đang truyền 4 lá còn lại theo chiều kim đồng hồ";
+    return "Đang truyền bài còn lại theo chiều kim đồng hồ";
   }
 
   return "Chọn 1 lá để giữ. Hết 10s hệ thống sẽ chọn ngẫu nhiên.";
@@ -2668,7 +2970,6 @@ function renderDailyDraftCard(card: TravelCardData, index: number) {
     <article
       class="daily-draft-card daily-draft-card--${index + 1} draft-deal-slot ${isSelected ? "daily-draft-card--selected" : ""}"
       data-draft-card-id="${card.id}"
-      style="${isSelected ? "z-index: 99999 !important; position: relative; isolation: isolate; transform: translateY(-28px) scale(1.06) rotate(0deg); filter: drop-shadow(0 18px 22px rgba(75,47,25,.28));" : ""}"
       title="${card.name} - ${card.city}"
     >
       ${renderHandCard(card, index)}
@@ -2695,11 +2996,9 @@ function updateDraftSelectedVisualOnly() {
     */
     if (isSelected) {
       element.style.setProperty("z-index", "99999", "important");
-      element.style.setProperty("position", "relative", "important");
       element.style.setProperty("isolation", "isolate", "important");
     } else {
       element.style.removeProperty("z-index");
-      element.style.removeProperty("position");
       element.style.removeProperty("isolation");
     }
 
@@ -2741,7 +3040,9 @@ function selectDraftCard(cardId: string) {
     - không full rerender hand khi chọn
     - bấm lại cùng lá thì toggle hủy chọn
   */
-  if (!isOnlineRoomActive() && isInitialDealInProgress) return;
+  // Cho phép chọn bài ngay cả khi animation chia bài chưa gỡ class kịp.
+  // Nếu chặn bằng isInitialDealInProgress, chỉ cần animation bị kẹt là card không bấm được.
+  // if (!isOnlineRoomActive() && isInitialDealInProgress) return;
 
   if (suppressNextClick) {
     suppressNextClick = false;
@@ -2959,6 +3260,68 @@ function finishDraftDealWithoutFullRerender() {
   startDraftTimer();
 }
 
+function finishOnlineDraftDealVisualOnly() {
+  isInitialDealInProgress = false;
+  onlineDraftAnimationTimerId = null;
+
+  const handElement = document.querySelector(".player-hand");
+  handElement?.classList.remove("player-hand--dealing", "is-dealing", "deal-active");
+
+  const handMeta = handElement?.querySelector(".player-hand__meta");
+  if (handMeta) {
+    handMeta.textContent = `Còn ${draftPickSecondsLeft}s • bấm 1 lá để chọn`;
+  }
+
+  const draftInfo = handElement?.querySelector(".draft-hand-meta__info em");
+  if (draftInfo) {
+    draftInfo.textContent = "Bấm để chọn, giữ 0.5s để xem lớn.";
+  }
+
+  updateDraftSelectedVisualOnly();
+}
+
+function playOnlinePlanningHandDealAfterDraft() {
+  const onlineHand = getOnlineSelfHand();
+
+  if (onlineHand) {
+    playerHand = [...onlineHand];
+  }
+
+  isDraftPhase = false;
+  isSimulationMode = false;
+  isPassingDraftCards = false;
+  isInitialDealInProgress = true;
+  hasPlayedOnlinePlanningDealAfterDraft = true;
+
+  playGameSound("deal");
+  rerenderGameShell();
+
+  /*
+    Tránh giật:
+    Sau khi render hand planning để chạy animation, khóa render signature ngay.
+    Nếu không, socket update planning kế tiếp có thể rerender lại giữa animation,
+    nhìn như card bị snap/giật.
+  */
+  lastOnlineRenderSignature = getOnlineRenderSignature();
+
+  window.requestAnimationFrame(() => {
+    const handElement = document.querySelector(".player-hand:not(.player-hand--draft)") as HTMLElement | null;
+    handElement?.classList.add("planning-deal-active");
+  });
+
+  window.setTimeout(() => {
+    isInitialDealInProgress = false;
+
+    const handElement = document.querySelector(".player-hand");
+    handElement?.classList.remove("player-hand--dealing", "is-dealing", "deal-active", "planning-deal-active");
+
+    const handMeta = handElement?.querySelector(".player-hand__meta");
+    if (handMeta) {
+      handMeta.textContent = "Giữ 0.5s để xem lớn";
+    }
+  }, 1760);
+}
+
 function playDraftDealAnimationAndStartTimer() {
   stopDraftTimer();
   clearDailyDealTimer();
@@ -2969,12 +3332,12 @@ function playDraftDealAnimationAndStartTimer() {
   activateDraftDealAnimation();
 
   /*
-    CSS draft deal: 1.08s + max delay 0.24s.
+    CSS draft deal 7 lá: animation chạy trực tiếp trên 7 wrapper.
     Không rerender toàn arena ở frame cuối; chỉ gỡ class để tránh snap/jank.
   */
   dailyDealTimerId = window.setTimeout(() => {
     finishDraftDealWithoutFullRerender();
-  }, 1420);
+  }, 1320);
 }
 
 function finishDailyDealAndStartTimer() {
@@ -3001,7 +3364,7 @@ function finishDailyDealAndStartTimer() {
         placeNextRealtimeBotMove();
       }, 250);
     }
-  }, 1420);
+  }, 1320);
 }
 
 function startNextDayOrPhase() {
@@ -4756,7 +5119,7 @@ function rerenderArena() {
 function placeHandCardOnBoard(cardId: string, rowIndex: number, colIndex: number) {
   if (isSimulationMode || isInitialDealInProgress) return;
   if (colIndex !== currentDayIndex) return;
-  if (getBoardSlots()[rowIndex][colIndex] !== null) return;
+  if (!canPlaceOnBoardCell(rowIndex, colIndex)) return;
 
   const handIndex = playerHand.findIndex((card) => card.id === cardId);
   if (handIndex === -1) return;
@@ -4788,15 +5151,21 @@ function placeHandCardOnBoard(cardId: string, rowIndex: number, colIndex: number
     return;
   }
 
-  if (!getCardAffordability(selectedCard).canAfford) {
-    triggerResourceRejectedFeedback(rowIndex, colIndex);
-    return;
-  }
+  const remainingBeforePlace = getRemainingResources();
+  const coinDebt = Math.max(0, selectedCard.coin - remainingBeforePlace.coin);
+  const staminaDebt = Math.max(0, selectedCard.stamina - remainingBeforePlace.stamina);
 
   playGameSound("cardPlace");
 
   playerHand.splice(handIndex, 1);
   getBoardSlots()[rowIndex][colIndex] = selectedCard;
+
+  addLocalDebtOrExhaustToken({
+    rowIndex,
+    card: selectedCard,
+    coinDebt,
+    staminaDebt,
+  });
 
   sendPlaceCard({
     cardId: selectedCard.id,
@@ -4807,6 +5176,7 @@ function placeHandCardOnBoard(cardId: string, rowIndex: number, colIndex: number
     vp: selectedCard.vp,
     coin: selectedCard.coin,
     stamina: selectedCard.stamina,
+    image: selectedCard.image,
     name: selectedCard.name,
   });
 
@@ -4846,11 +5216,34 @@ function returnFocusedBoardCardToHand() {
 
   const { rowIndex, colIndex } = focusedBoardPosition;
   if (colIndex !== currentDayIndex) return;
+
   const card = getBoardSlots()[rowIndex]?.[colIndex];
 
-  if (!card) return;
+  if (!card || isBoardDebtToken(card) || isBoardLockToken(card)) return;
+
+  /*
+    Online board là state từ server. Không được chỉ set null trên client,
+    vì lần nhận room:state tiếp theo server sẽ gửi lại lá đó và nó hiện lại.
+    Phải gửi event lên server để xóa ô thật.
+  */
+  if (isOnlineRoomActive()) {
+    sendReturnBoardCard({
+      rowIndex,
+      colIndex,
+    });
+
+    focusedHandCardId = null;
+    focusedBoardCard = null;
+    focusedBoardPosition = null;
+    lastPlacedBoardPosition = null;
+    selectedHandCardId = null;
+    suppressNextClick = false;
+
+    return;
+  }
 
   getBoardSlots()[rowIndex][colIndex] = null;
+  clearLocalGeneratedTokenForReturnedCard(rowIndex, colIndex, card);
 
   /*
     Hand UI hiện được thiết kế đẹp nhất cho 5 lá.
@@ -5080,10 +5473,13 @@ function handleHandPointerMove(event: PointerEvent) {
   if (
     Number.isInteger(rowIndex) &&
     Number.isInteger(colIndex) &&
-    getBoardSlots()[rowIndex]?.[colIndex] === null &&
-    draggedCard &&
-    getCardAffordability(draggedCard).canAfford
+    canPlaceOnBoardCell(rowIndex, colIndex) &&
+    draggedCard
   ) {
+    /*
+      Cho phép thả cả khi không đủ xu/thể lực.
+      Khi đặt xuống, game sẽ tự tạo token Nợ / Kiệt sức ở ngày hôm sau.
+    */
     dropCell.classList.add("board-cell--drag-hover");
   } else {
     dropCell.classList.add("board-cell--drag-invalid");
@@ -5129,8 +5525,7 @@ function handleHandPointerUp(event: PointerEvent) {
       Number.isInteger(rowIndex) &&
       Number.isInteger(colIndex) &&
       getBoardSlots()[rowIndex]?.[colIndex] === null &&
-      draggedCard &&
-      getCardAffordability(draggedCard).canAfford
+      draggedCard
     ) {
       placeHandCardOnBoard(cardId, rowIndex, colIndex);
       return;
@@ -5188,7 +5583,10 @@ function getDraggedCardIdFromEvent(event: DragEvent) {
 function clearBoardDragHoverClass() {
   document
     .querySelectorAll(".board-cell--drag-hover, .board-cell--drag-invalid")
-    .forEach((element) => element.classList.remove("board-cell--drag-hover"));
+    .forEach((element) => {
+      element.classList.remove("board-cell--drag-hover");
+      element.classList.remove("board-cell--drag-invalid");
+    });
 }
 
 (window as any).startDragHandCard = (event: DragEvent, id: string) => {
@@ -5253,7 +5651,7 @@ function clearBoardDragHoverClass() {
 
   const card = getHandCardById(cardId);
 
-  if (getBoardSlots()[rowIndex][colIndex] !== null || !card || !getCardAffordability(card).canAfford) {
+  if (!canPlaceOnBoardCell(rowIndex, colIndex) || !card) {
     triggerResourceRejectedFeedback(rowIndex, colIndex);
     return;
   }
@@ -5272,14 +5670,11 @@ function clearBoardDragHoverClass() {
 
   const card = getHandCardById(id);
 
-  if (card && !getCardAffordability(card).canAfford) {
-    event.preventDefault();
-    selectedHandCardId = null;
-    draggedHandCardId = null;
-    triggerResourceRejectedFeedback();
-    rerenderArena();
-    return;
-  }
+  /*
+    Không chặn card thiếu tài nguyên nữa.
+    Thiếu xu/thể lực vẫn được chọn/kéo để tạo cơ chế Nợ / Kiệt sức.
+  */
+  if (!card) return;
 
   clearCustomHandDragVisuals();
 
@@ -5343,6 +5738,16 @@ function clearBoardDragHoverClass() {
   const card = getBoardCardByPosition(rowIndex, colIndex);
 
   if (card) {
+    if (isBoardDebtToken(card)) {
+      if (!isDraftPhase && !isInitialDealInProgress && colIndex === currentDayIndex && selectedHandCardId) {
+        placeSelectedHandCard(rowIndex, colIndex);
+        return;
+      }
+
+      payDebtToken(rowIndex, colIndex, card);
+      return;
+    }
+
     clearCustomHandDragVisuals();
     focusedHandCardId = null;
     focusedBoardCard = card;
@@ -5678,11 +6083,19 @@ let onlineDraftDisplayPool: TravelCardData[] | null = null;
 let onlineDraftPendingPool: TravelCardData[] | null = null;
 let shouldActivateOnlineDealAnimation = false;
 let shouldActivateOnlinePassAnimation = false;
+let isOnlineFinalDraftReturnAnimating = false;
+let onlineFinalDraftReturnTimerId: number | null = null;
+let hasPlayedOnlinePlanningDealAfterDraft = false;
 
 function clearOnlineDraftAnimationTimer() {
   if (onlineDraftAnimationTimerId !== null) {
     window.clearTimeout(onlineDraftAnimationTimerId);
     onlineDraftAnimationTimerId = null;
+  }
+
+  if (onlineFinalDraftReturnTimerId !== null) {
+    window.clearTimeout(onlineFinalDraftReturnTimerId);
+    onlineFinalDraftReturnTimerId = null;
   }
 }
 

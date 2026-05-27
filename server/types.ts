@@ -10,6 +10,11 @@ export type PublicBoardCell = {
   vp: number;
   coin: number;
   stamina: number;
+  image?: string;
+  type?: "card" | "debt" | "lock";
+  debtAmount?: number;
+  lockedReason?: string;
+  sourceCardName?: string;
 } | null;
 
 export type ServerTravelCardData = {
@@ -117,6 +122,7 @@ export type ClientToServerEvents = {
     vp?: number;
     coin?: number;
     stamina?: number;
+    image?: string;
     name?: string;
   }) => void;
 
@@ -127,6 +133,20 @@ export type ClientToServerEvents = {
     coin?: number;
     stamina?: number;
     name?: string;
+  }) => void;
+
+  "planning:payDebt": (payload: {
+    roomId: string;
+    playerId: PlayerId;
+    rowIndex: number;
+    colIndex: number;
+  }) => void;
+
+  "planning:returnBoardCard": (payload: {
+    roomId: string;
+    playerId: PlayerId;
+    rowIndex: number;
+    colIndex: number;
   }) => void;
 };
 

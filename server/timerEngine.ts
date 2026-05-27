@@ -86,7 +86,7 @@ function getCurrentDayComboBonus(state: RoomState, playerId: PlayerId) {
   for (const row of player.board) {
     const cell = row[dayIndex];
 
-    if (!cell) continue;
+    if (!cell || cell.type === "debt" || cell.type === "lock") continue;
 
     const tag = (cell.tag || "").toUpperCase();
 
@@ -121,6 +121,15 @@ function getCurrentDaySimulationDelta(state: RoomState, playerId: PlayerId): Ser
     const cell = player.board[rowIndex]?.[dayIndex];
 
     if (!cell) continue;
+
+    if (cell.type === "debt") {
+      totalVp -= 20;
+      continue;
+    }
+
+    if (cell.type === "lock") {
+      continue;
+    }
 
     totalVp += cell.vp ?? 0;
 

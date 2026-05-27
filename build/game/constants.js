@@ -1,5 +1,5 @@
-export const STARTING_COIN = 1640;
-export const STARTING_STAMINA = 45;
+export const STARTING_COIN = 3;
+export const STARTING_STAMINA = 2;
 export const HAND_SIZE = 5;
 export const TURN_DURATION_SECONDS = 15;
 export const PHASE_DAYS = 5;

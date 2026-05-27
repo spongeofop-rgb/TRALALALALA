@@ -1,6 +1,10 @@
 import type { PlayerId, RoomState, ServerTravelCardData } from "./types.js";
 import { PLAYER_IDS, createServerDeck, shuffleCards } from "./gameEngine.js";
 
+const DRAFT_STARTING_POOL_SIZE = 7;
+const DRAFT_PICK_TARGET = 5;
+
+
 function getActiveDraftPlayerIds(state: RoomState): PlayerId[] {
   const connectedPlayerIds = PLAYER_IDS.filter((playerId) => {
     return state.players[playerId].isConnected;
@@ -82,10 +86,10 @@ export function startDraftForCurrentDay(state: RoomState) {
   state.timer = 10;
 
   const activePlayerIds = getActiveDraftPlayerIds(state);
-  const requiredCards = activePlayerIds.length * 5;
+  const requiredCards = activePlayerIds.length * DRAFT_STARTING_POOL_SIZE;
 
   /*
-    Luật giữ nguyên: mỗi người đang chơi được phát đúng 5 lá/ngày.
+    Luật mới: mỗi người đang chơi được phát 7 lá/ngày, draft giữ 5 lá.
     Không trả hand ngày cũ về deck ngay lập tức, vì làm vậy bài ngày 1 có thể bị phát lại
     ở ngày 2. Nếu deck thiếu, tạo bài generated có data thật để lấp đủ.
   */
@@ -105,9 +109,9 @@ export function startDraftForCurrentDay(state: RoomState) {
 
   activePlayerIds.forEach((playerId, index) => {
     const player = state.players[playerId];
-    const start = index * 5;
+    const start = index * DRAFT_STARTING_POOL_SIZE;
 
-    player.draftPool = draftCards.slice(start, start + 5);
+    player.draftPool = draftCards.slice(start, start + DRAFT_STARTING_POOL_SIZE);
   });
 }
 
@@ -141,11 +145,6 @@ export function finishDraftRound(state: RoomState) {
 
   const activePlayerIds = getActiveDraftPlayerIds(state);
 
-  /*
-    Mỗi người pick đúng 1 lá từ pool hiện tại.
-    Sau đó chỉ phần bài còn lại mới được chuyền cho người kế tiếp.
-    Không rút/random pool mới ở giữa draft.
-  */
   for (const playerId of activePlayerIds) {
     const player = state.players[playerId];
 
@@ -160,11 +159,11 @@ export function finishDraftRound(state: RoomState) {
     player.selectedDraftCardId = null;
   }
 
-  const hasMoreCards = activePlayerIds.some((playerId) => {
-    return state.players[playerId].draftPool.length > 0;
+  const everyonePickedEnough = activePlayerIds.every((playerId) => {
+    return state.players[playerId].pickedDraftCards.length >= DRAFT_PICK_TARGET;
   });
 
-  if (!hasMoreCards) {
+  if (everyonePickedEnough) {
     finishDraftAndStartPlanning(state);
     return;
   }
@@ -189,13 +188,23 @@ function rotateDraftPoolsClockwise(state: RoomState, activePlayerIds: PlayerId[]
 
 function finishDraftAndStartPlanning(state: RoomState) {
   state.phase = "planning";
-  state.timer = 5;
+  state.timer = 60;
+
+  const leftoverDraftCards: ServerTravelCardData[] = [];
 
   for (const playerId of PLAYER_IDS) {
     const player = state.players[playerId];
 
-    player.hand = [...player.pickedDraftCards];
+    leftoverDraftCards.push(...player.draftPool);
+
+    player.hand = player.pickedDraftCards.slice(0, DRAFT_PICK_TARGET);
+    player.pickedDraftCards = player.hand.slice();
     player.draftPool = [];
     player.selectedDraftCardId = null;
   }
+
+  if (leftoverDraftCards.length > 0) {
+    state.deck = shuffleCards([...state.deck, ...leftoverDraftCards]);
+  }
 }
+

@@ -14,6 +14,7 @@ export type DraftPickResult = {
 export type CreateDailyDraftPlayersParams = {
   deck: TravelCardData[];
   initialDeck: TravelCardData[];
+  // poolSize dùng cho số lá phát ban đầu. Game hiện phát 7 lá rồi pick 5.
   handSize: number;
   playerCount: number;
   shuffleCards: (cards: TravelCardData[]) => TravelCardData[];

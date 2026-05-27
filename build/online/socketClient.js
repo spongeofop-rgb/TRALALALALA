@@ -240,3 +240,15 @@ export function sendDiscardCard(payload) {
     }
     socket.emit("planning:discardCard", Object.assign({ roomId: onlineClientState.roomId, playerId: onlineClientState.playerId }, payload));
 }
+export function sendPayDebt(payload) {
+    if (!onlineClientState.roomId || !onlineClientState.playerId) {
+        return;
+    }
+    socket.emit("planning:payDebt", Object.assign({ roomId: onlineClientState.roomId, playerId: onlineClientState.playerId }, payload));
+}
+export function sendReturnBoardCard(payload) {
+    if (!onlineClientState.roomId || !onlineClientState.playerId) {
+        return;
+    }
+    socket.emit("planning:returnBoardCard", Object.assign({ roomId: onlineClientState.roomId, playerId: onlineClientState.playerId }, payload));
+}

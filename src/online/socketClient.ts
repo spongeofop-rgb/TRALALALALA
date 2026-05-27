@@ -10,6 +10,11 @@ export type PublicBoardCell = {
   vp: number;
   coin?: number;
   stamina?: number;
+  image?: string;
+  type?: "card" | "debt" | "lock";
+  debtAmount?: number;
+  lockedReason?: string;
+  sourceCardName?: string;
 } | null;
 
 export type OnlineTravelCardData = {
@@ -381,6 +386,7 @@ export function sendPlaceCard(payload: {
   vp?: number;
   coin?: number;
   stamina?: number;
+  image?: string;
   name?: string;
 }) {
   if (!onlineClientState.roomId || !onlineClientState.playerId) {
@@ -406,6 +412,38 @@ export function sendDiscardCard(payload: {
   }
 
   socket.emit("planning:discardCard", {
+    roomId: onlineClientState.roomId,
+    playerId: onlineClientState.playerId,
+    ...payload,
+  });
+}
+
+
+export function sendPayDebt(payload: {
+  rowIndex: number;
+  colIndex: number;
+}) {
+  if (!onlineClientState.roomId || !onlineClientState.playerId) {
+    return;
+  }
+
+  socket.emit("planning:payDebt", {
+    roomId: onlineClientState.roomId,
+    playerId: onlineClientState.playerId,
+    ...payload,
+  });
+}
+
+
+export function sendReturnBoardCard(payload: {
+  rowIndex: number;
+  colIndex: number;
+}) {
+  if (!onlineClientState.roomId || !onlineClientState.playerId) {
+    return;
+  }
+
+  socket.emit("planning:returnBoardCard", {
     roomId: onlineClientState.roomId,
     playerId: onlineClientState.playerId,
     ...payload,

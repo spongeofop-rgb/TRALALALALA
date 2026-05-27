@@ -4445,2436 +4445,316 @@ body {
   cursor: not-allowed;
   filter: grayscale(0.35);
 }
-/* Draft cards dùng luôn vùng fan bài */
+/* =========================================
+   CLEAN DRAFT 7-CARD FAN
+   Luật: phát 7 lá, chọn 5 lá, 2 lá dư trả deck.
+   Đây là block draft duy nhất; không dùng override chồng nhau.
+   ========================================= */
+/* Draft cards dùng vùng hand hiện có */
 .player-hand--draft .player-hand__cards {
-  height: calc(var(--hand-height) - 72px);
-  transform: translateY(-6px);
-  align-items: flex-start;
-  gap: 0;
+  position: relative;
+  width: 560px;
+  max-width: 100%;
+  height: 250px;
+  min-height: 250px;
+  margin: 0 auto;
+  display: block;
+  overflow: visible;
+  transform: translateY(-28px);
+  isolation: isolate;
 }
 .player-hand--draft .daily-draft-card {
-  position: relative;
+  position: absolute;
+  top: 0;
   width: var(--hand-card-w);
   height: var(--hand-card-h);
-  flex: 0 0 var(--hand-card-w);
-  margin-left: calc(var(--hand-overlap) * -1);
+  flex: none;
+  margin: 0;
   cursor: pointer;
-  transition: transform 160ms cubic-bezier(0.22, 0.61, 0.36, 1), filter 140ms ease, box-shadow 140ms ease;
-}
-.player-hand--draft .daily-draft-card:first-child {
-  margin-left: 0;
-}
-.player-hand--draft .daily-draft-card > .hand-card {
-  margin: 0 !important;
-  pointer-events: none;
-}
-/* Dùng fan transform y như hand thường */
-.player-hand--draft .daily-draft-card--1 {
-  transform: translate3d(0, -2px, 0) rotate(-15deg);
-  z-index: 1;
-}
-.player-hand--draft .daily-draft-card--2 {
-  transform: translate3d(0, -7px, 0) rotate(-7deg);
-  z-index: 2;
-}
-.player-hand--draft .daily-draft-card--3 {
-  transform: translate3d(0, -10px, 0) rotate(0deg);
-  z-index: 3;
-}
-.player-hand--draft .daily-draft-card--4 {
-  transform: translate3d(0, -7px, 0) rotate(7deg);
-  z-index: 2;
-}
-.player-hand--draft .daily-draft-card--5 {
-  transform: translate3d(0, -2px, 0) rotate(15deg);
-  z-index: 1;
-}
-.player-hand--draft .daily-draft-card:hover {
-  z-index: 30;
-  filter: saturate(1.04) contrast(1.01);
-}
-/* Hover nhẹ thôi để không giật */
-.player-hand--draft .daily-draft-card--1:hover {
-  transform: translate3d(-6px, -22px, 0) rotate(-10deg) scale(1.025);
-}
-.player-hand--draft .daily-draft-card--2:hover {
-  transform: translate3d(-3px, -25px, 0) rotate(-4deg) scale(1.025);
-}
-.player-hand--draft .daily-draft-card--3:hover {
-  transform: translate3d(0, -27px, 0) rotate(0deg) scale(1.03);
-}
-.player-hand--draft .daily-draft-card--4:hover {
-  transform: translate3d(3px, -25px, 0) rotate(4deg) scale(1.025);
-}
-.player-hand--draft .daily-draft-card--5:hover {
-  transform: translate3d(6px, -22px, 0) rotate(10deg) scale(1.025);
-}
-.player-hand--draft .daily-draft-card--selected,
-.player-hand--draft .daily-draft-card--selected:hover {
-  z-index: 50 !important;
-  transform: translate3d(0, -34px, 0) rotate(0deg) scale(1.045) !important;
-  filter: saturate(1.08) contrast(1.02);
-}
-.player-hand--draft .daily-draft-card--selected > .hand-card {
-  box-shadow: 0 24px 44px rgba(70, 45, 20, 0.26), 0 0 0 5px rgba(34, 197, 94, 0.32), 0 0 0 9px rgba(255, 255, 255, 0.52) !important;
-}
-/* Truyền bài ngay từ hand area sang phải */
-.player-hand--draft .player-hand__cards.is-passing .daily-draft-card:not(.daily-draft-card--selected) {
-  animation: passDailyDraftCardsFromHand 850ms cubic-bezier(0.18, 0.82, 0.24, 1) forwards;
-}
-.player-hand--draft .player-hand__cards.is-passing .daily-draft-card--selected {
-  animation: keepDraftCardFromHand 620ms ease forwards;
-}
-@keyframes passDailyDraftCardsFromHand {
-  0% {
-    opacity: 1;
-  }
-  45% {
-    opacity: 1;
-    transform: translate3d(180px, -70px, 90px) rotate(14deg) scale(0.94);
-  }
-  100% {
-    opacity: 0;
-    transform: translate3d(560px, -28px, 0) rotate(24deg) scale(0.78);
-  }
-}
-@keyframes keepDraftCardFromHand {
-  0% {
-    opacity: 1;
-  }
-  70% {
-    opacity: 1;
-    transform: translate3d(0, -46px, 0) rotate(0deg) scale(1.08);
-  }
-  100% {
-    opacity: 0;
-    transform: translate3d(0, -62px, 0) rotate(0deg) scale(0.9);
-  }
-}
-.draft-hand-empty {
-  color: #8a6f58;
-  font-size: 13px;
-  font-weight: 900;
-  margin-top: 70px;
-}
-/* Tắt style draft panel cũ nếu còn */
-.daily-draft__cards,
-.daily-draft__table,
-.daily-draft__bottom {
-  pointer-events: none;
-}
-@media (max-height: 820px) {
-  .draft-hand-meta {
-    height: 31px;
-    flex-basis: 31px;
-  }
-  .draft-hand-meta__info {
-    grid-template-columns: 56px minmax(0, 1fr);
-  }
-  .draft-hand-meta__info em {
-    display: none;
-  }
-  .player-hand--draft .player-hand__cards {
-    height: calc(var(--hand-height) - 66px);
-  }
-}
-/* =========================================
-   DAILY DRAFT IN HAND - CLEAN PICK ONLY
-   - Không có nút Random / Giữ lá.
-   - Bấm lá là chọn.
-   - Chỉ hết 10s mới chuyền bài.
-   - Gọn và giống khu hand hơn.
-   ========================================= */
-.player-hand--draft {
-  padding: 8px 14px 10px !important;
-  border: 0 !important;
-  background: radial-gradient(ellipse at 50% 66%, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.16) 58%, transparent 76%), linear-gradient(180deg, rgba(255, 250, 239, 0.34), rgba(238, 224, 202, 0.42)) !important;
-  box-shadow: none !important;
-}
-.player-hand--draft::before,
-.player-hand--draft::after {
-  display: none !important;
-  content: none !important;
-}
-.player-hand--draft .player-hand__top {
-  height: 24px !important;
-  flex-basis: 24px !important;
-  margin-bottom: 0 !important;
-  border: 0 !important;
-}
-.player-hand--draft .hand-badge {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
-  box-shadow: 0 6px 14px rgba(124, 58, 237, 0.18);
-}
-.player-hand--draft .player-hand__title h2 {
-  font-size: 15px !important;
-  color: #5b4331;
-}
-.player-hand--draft .player-hand__meta {
-  padding: 4px 8px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.52);
-  border: 1px solid rgba(161, 125, 83, 0.16);
-  color: #6b5542;
-  font-size: 9px;
-  font-weight: 900;
-}
-.draft-hand-meta {
-  position: relative !important;
-  z-index: 90 !important;
-  height: 30px !important;
-  flex: 0 0 30px !important;
-  margin: 1px 0 0 !important;
-  padding: 0 8px !important;
-  display: grid !important;
-  grid-template-columns: 1fr auto !important;
-  gap: 10px !important;
-  align-items: center !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-}
-.draft-hand-meta__info {
-  min-width: 0;
-  display: grid !important;
-  grid-template-columns: 76px minmax(160px, 0.7fr) minmax(220px, 1fr) !important;
-  gap: 10px !important;
-  align-items: center !important;
-}
-.draft-hand-meta__info span {
-  color: #8b5cf6 !important;
-  font-size: 8px !important;
-  line-height: 1 !important;
-  font-weight: 1000 !important;
-  letter-spacing: 0.11em !important;
-  text-transform: uppercase !important;
-}
-.draft-hand-meta__info strong {
-  min-width: 0;
-  color: #4e3a2b !important;
-  font-size: 12px !important;
-  line-height: 1 !important;
-  font-weight: 1000 !important;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.draft-hand-meta__info em {
-  min-width: 0;
-  color: #6b5542 !important;
-  font-size: 9.2px !important;
-  line-height: 1 !important;
-  font-style: normal !important;
-  font-weight: 850 !important;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.draft-hand-meta__wait {
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: rgba(255, 242, 196, 0.82);
-  border: 1px solid rgba(245, 158, 11, 0.25);
-}
-.draft-hand-meta__wait span {
-  display: block;
-  color: #b45309;
-  font-size: 8px;
-  line-height: 1;
-  font-weight: 1000;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-/* Ẩn hoàn toàn button cũ nếu còn sót */
-.draft-hand-meta__confirm,
-.daily-draft__confirm {
-  display: none !important;
-}
-.player-hand--draft .player-hand__cards {
-  height: calc(var(--hand-height) - 58px) !important;
-  transform: translateY(-2px) !important;
-  align-items: flex-start !important;
-  justify-content: center !important;
-  overflow: visible !important;
-}
-/* Draft card nhìn gọn hơn, ít xòe quá rộng */
-.player-hand--draft .daily-draft-card {
-  width: var(--hand-card-w) !important;
-  height: var(--hand-card-h) !important;
-  flex: 0 0 var(--hand-card-w) !important;
-  margin-left: calc((var(--hand-overlap) - 10px) * -1) !important;
-  cursor: pointer;
-}
-.player-hand--draft .daily-draft-card:first-child {
-  margin-left: 0 !important;
-}
-.player-hand--draft .daily-draft-card > .hand-card {
-  margin: 0 !important;
-  pointer-events: none !important;
-}
-/* Fan thấp hơn một chút để không chui lên quá nhiều */
-.player-hand--draft .daily-draft-card--1 {
-  transform: translate3d(0, 8px, 0) rotate(-11deg) !important;
-  z-index: 1;
-}
-.player-hand--draft .daily-draft-card--2 {
-  transform: translate3d(0, 0, 0) rotate(-5deg) !important;
-  z-index: 2;
-}
-.player-hand--draft .daily-draft-card--3 {
-  transform: translate3d(0, -4px, 0) rotate(0deg) !important;
-  z-index: 3;
-}
-.player-hand--draft .daily-draft-card--4 {
-  transform: translate3d(0, 0, 0) rotate(5deg) !important;
-  z-index: 2;
-}
-.player-hand--draft .daily-draft-card--5 {
-  transform: translate3d(0, 8px, 0) rotate(11deg) !important;
-  z-index: 1;
-}
-/* Hover chỉ nhẹ, tránh xấu và giật */
-.player-hand--draft .daily-draft-card:hover {
-  z-index: 40 !important;
-  filter: saturate(1.04) contrast(1.01);
-}
-.player-hand--draft .daily-draft-card--1:hover {
-  transform: translate3d(-5px, -10px, 0) rotate(-8deg) scale(1.018) !important;
-}
-.player-hand--draft .daily-draft-card--2:hover {
-  transform: translate3d(-2px, -13px, 0) rotate(-3deg) scale(1.018) !important;
-}
-.player-hand--draft .daily-draft-card--3:hover {
-  transform: translate3d(0, -16px, 0) rotate(0deg) scale(1.02) !important;
-}
-.player-hand--draft .daily-draft-card--4:hover {
-  transform: translate3d(2px, -13px, 0) rotate(3deg) scale(1.018) !important;
-}
-.player-hand--draft .daily-draft-card--5:hover {
-  transform: translate3d(5px, -10px, 0) rotate(8deg) scale(1.018) !important;
-}
-/* Selected: rõ nhưng vẫn đẹp, không làm chuyền bài ngay */
-.player-hand--draft .daily-draft-card--selected,
-.player-hand--draft .daily-draft-card--selected:hover {
-  z-index: 80 !important;
-  transform: translate3d(0, -24px, 0) rotate(0deg) scale(1.038) !important;
-  filter: saturate(1.08) contrast(1.02);
-}
-.player-hand--draft .daily-draft-card--selected > .hand-card {
-  box-shadow: 0 24px 42px rgba(70, 45, 20, 0.24), 0 0 0 5px rgba(34, 197, 94, 0.32), 0 0 0 9px rgba(255, 255, 255, 0.5) !important;
-}
-/* Khi hết giờ mới chuyền bài */
-.player-hand--draft .player-hand__cards.is-passing .daily-draft-card:not(.daily-draft-card--selected) {
-  animation: passDailyDraftCardsFromHand 850ms cubic-bezier(0.18, 0.82, 0.24, 1) forwards !important;
-}
-.player-hand--draft .player-hand__cards.is-passing .daily-draft-card--selected {
-  animation: keepDraftCardFromHand 620ms ease forwards !important;
-}
-@media (max-height: 820px) {
-  .draft-hand-meta {
-    height: 27px !important;
-    flex-basis: 27px !important;
-  }
-  .draft-hand-meta__info {
-    grid-template-columns: 62px minmax(150px, 1fr) !important;
-  }
-  .draft-hand-meta__info em,
-  .draft-hand-meta__wait {
-    display: none !important;
-  }
-  .player-hand--draft .player-hand__cards {
-    height: calc(var(--hand-height) - 53px) !important;
-  }
-}
-/* =========================================
-   DRAFT ANIMATION + LAYOUT FIX (latest)
-   - restore deal animation when a draft hand appears
-   - restore deal animation when moving from draft -> xếp bài
-   - less sunken draft cards
-   - pass remaining cards toward deck panel
-   ========================================= */
-.player-hand--draft {
-  padding-top: 8px !important;
-}
-.player-hand--draft .player-hand__cards {
-  height: calc(var(--hand-height) - 56px) !important;
-  padding-top: 8px !important;
-  align-items: flex-start !important;
-  justify-content: center !important;
-  overflow: visible !important;
-}
-.player-hand--draft .daily-draft-card {
-  margin-left: calc((var(--hand-overlap) - 2px) * -1) !important;
-}
-.player-hand--draft .daily-draft-card:first-child {
-  margin-left: 0 !important;
-}
-.player-hand--draft .daily-draft-card--1 {
-  transform: translate3d(0, 4px, 0) rotate(-10deg) !important;
-  z-index: 1;
-}
-.player-hand--draft .daily-draft-card--2 {
-  transform: translate3d(0, -2px, 0) rotate(-5deg) !important;
-  z-index: 2;
-}
-.player-hand--draft .daily-draft-card--3 {
-  transform: translate3d(0, -6px, 0) rotate(0deg) !important;
-  z-index: 3;
-}
-.player-hand--draft .daily-draft-card--4 {
-  transform: translate3d(0, -2px, 0) rotate(5deg) !important;
-  z-index: 2;
-}
-.player-hand--draft .daily-draft-card--5 {
-  transform: translate3d(0, 4px, 0) rotate(10deg) !important;
-  z-index: 1;
-}
-.player-hand--draft .daily-draft-card:hover {
-  z-index: 40 !important;
-  filter: saturate(1.04) contrast(1.01);
-}
-.player-hand--draft .daily-draft-card--1:hover {
-  transform: translate3d(-4px, -10px, 0) rotate(-8deg) scale(1.016) !important;
-}
-.player-hand--draft .daily-draft-card--2:hover {
-  transform: translate3d(-2px, -13px, 0) rotate(-4deg) scale(1.016) !important;
-}
-.player-hand--draft .daily-draft-card--3:hover {
-  transform: translate3d(0, -16px, 0) rotate(0deg) scale(1.018) !important;
-}
-.player-hand--draft .daily-draft-card--4:hover {
-  transform: translate3d(2px, -13px, 0) rotate(4deg) scale(1.016) !important;
-}
-.player-hand--draft .daily-draft-card--5:hover {
-  transform: translate3d(4px, -10px, 0) rotate(8deg) scale(1.016) !important;
-}
-.player-hand--draft .daily-draft-card--selected,
-.player-hand--draft .daily-draft-card--selected:hover {
-  z-index: 80 !important;
-  transform: translate3d(0, -22px, 0) rotate(0deg) scale(1.035) !important;
-}
-/* selected card stays, remaining 4 fly toward deck area on the right */
-.player-hand--draft .player-hand__cards.is-passing .daily-draft-card:not(.daily-draft-card--selected) {
-  transform-origin: center center !important;
-  animation: passDailyDraftCardsToDeck 920ms cubic-bezier(0.17, 0.82, 0.24, 1) forwards !important;
-}
-.player-hand--draft .player-hand__cards.is-passing .daily-draft-card--selected {
-  animation: keepDraftCardChosen 760ms ease forwards !important;
-}
-@keyframes passDailyDraftCardsToDeck {
-  0% {
-    opacity: 1;
-  }
-  20% {
-    opacity: 1;
-    transform: translate3d(35px, -18px, 0) rotate(6deg) scale(0.98);
-  }
-  70% {
-    opacity: 1;
-    transform: translate3d(380px, -50px, 0) rotate(14deg) scale(0.74);
-  }
-  100% {
-    opacity: 0;
-    transform: translate3d(560px, -92px, 0) rotate(20deg) scale(0.52);
-  }
-}
-@keyframes keepDraftCardChosen {
-  0% {
-    opacity: 1;
-  }
-  70% {
-    opacity: 1;
-    transform: translate3d(0, -30px, 0) rotate(0deg) scale(1.05);
-  }
-  100% {
-    opacity: 0;
-    transform: translate3d(0, -44px, 0) rotate(0deg) scale(0.94);
-  }
-}
-/* During dealing in draft: use actual cards and suppress extra hover jitter */
-.player-hand.player-hand--draft.player-hand--dealing .daily-draft-card {
-  transition: none !important;
-}
-.player-hand.player-hand--draft.player-hand--dealing .daily-draft-card:hover,
-.player-hand.player-hand--draft.player-hand--dealing .daily-draft-card--selected {
-  filter: none !important;
-}
-.player-hand.player-hand--draft.player-hand--dealing .daily-draft-card > .hand-card {
-  will-change: transform !important;
-}
-/* =========================================
-   DRAFT DEAL/PASS FINAL FIX
-   - Animation chia bài vào phase draft: animate wrapper .daily-draft-card.
-   - Animation chuyền bài: 4 lá bay về hướng deck bên phải.
-   - Nâng card lên để không bị chìm xuống đáy hand.
-   ========================================= */
-/* Khu hand trong draft cao và thoáng hơn */
-.player-hand--draft {
-  height: 292px !important;
-  min-height: 292px !important;
-  flex-basis: 292px !important;
-  overflow: visible !important;
-  padding-bottom: 0 !important;
-}
-.player-hand--draft .player-hand__cards {
-  height: 232px !important;
-  min-height: 232px !important;
-  padding-top: 0 !important;
-  transform: translateY(-22px) !important;
-  overflow: visible !important;
-  align-items: flex-start !important;
-}
-/* Card không bị chìm: fan nằm cao hơn */
-.player-hand--draft .daily-draft-card--1 {
-  transform: translate3d(0, -12px, 0) rotate(-10deg) !important;
-}
-.player-hand--draft .daily-draft-card--2 {
-  transform: translate3d(0, -18px, 0) rotate(-5deg) !important;
-}
-.player-hand--draft .daily-draft-card--3 {
-  transform: translate3d(0, -22px, 0) rotate(0deg) !important;
-}
-.player-hand--draft .daily-draft-card--4 {
-  transform: translate3d(0, -18px, 0) rotate(5deg) !important;
-}
-.player-hand--draft .daily-draft-card--5 {
-  transform: translate3d(0, -12px, 0) rotate(10deg) !important;
-}
-.player-hand--draft .daily-draft-card--1:hover {
-  transform: translate3d(-4px, -27px, 0) rotate(-8deg) scale(1.016) !important;
-}
-.player-hand--draft .daily-draft-card--2:hover {
-  transform: translate3d(-2px, -30px, 0) rotate(-4deg) scale(1.016) !important;
-}
-.player-hand--draft .daily-draft-card--3:hover {
-  transform: translate3d(0, -34px, 0) rotate(0deg) scale(1.018) !important;
-}
-.player-hand--draft .daily-draft-card--4:hover {
-  transform: translate3d(2px, -30px, 0) rotate(4deg) scale(1.016) !important;
-}
-.player-hand--draft .daily-draft-card--5:hover {
-  transform: translate3d(4px, -27px, 0) rotate(8deg) scale(1.016) !important;
-}
-.player-hand--draft .daily-draft-card--selected,
-.player-hand--draft .daily-draft-card--selected:hover {
-  transform: translate3d(0, -44px, 0) rotate(0deg) scale(1.04) !important;
-}
-/* Trong lúc đang phát bài, animate WRAPPER, không animate .hand-card con */
-.player-hand.player-hand--draft.player-hand--dealing .daily-draft-card {
-  opacity: 0;
-  pointer-events: none !important;
-  will-change: transform, opacity;
-  animation-duration: 1.8s !important;
-  animation-timing-function: cubic-bezier(0.16, 0.9, 0.24, 1) !important;
-  animation-fill-mode: both !important;
-}
-.player-hand.player-hand--draft.player-hand--dealing .daily-draft-card > .hand-card,
-.player-hand.player-hand--draft.player-hand--dealing .daily-draft-card > .hand-card:hover {
-  transform: none !important;
-  animation: none !important;
-  transition: none !important;
-}
-/* Vị trí xuất phát: từ phía deck bên phải bay vào hand */
-.player-hand.player-hand--draft.player-hand--dealing .daily-draft-card--1 {
-  animation-name: draftDealIn1 !important;
-  animation-delay: 0ms !important;
-}
-.player-hand.player-hand--draft.player-hand--dealing .daily-draft-card--2 {
-  animation-name: draftDealIn2 !important;
-  animation-delay: 140ms !important;
-}
-.player-hand.player-hand--draft.player-hand--dealing .daily-draft-card--3 {
-  animation-name: draftDealIn3 !important;
-  animation-delay: 280ms !important;
-}
-.player-hand.player-hand--draft.player-hand--dealing .daily-draft-card--4 {
-  animation-name: draftDealIn4 !important;
-  animation-delay: 420ms !important;
-}
-.player-hand.player-hand--draft.player-hand--dealing .daily-draft-card--5 {
-  animation-name: draftDealIn5 !important;
-  animation-delay: 560ms !important;
-}
-@keyframes draftDealIn1 {
-  0% {
-    opacity: 0;
-    transform: translate3d(640px, -138px, 0) rotate(22deg) scale(0.58);
-  }
-  12% {
-    opacity: 1;
-  }
-  58% {
-    opacity: 1;
-    transform: translate3d(230px, -92px, 0) rotate(-18deg) scale(0.92);
-  }
-  100% {
-    opacity: 1;
-    transform: translate3d(0, -12px, 0) rotate(-10deg) scale(1);
-  }
-}
-@keyframes draftDealIn2 {
-  0% {
-    opacity: 0;
-    transform: translate3d(620px, -142px, 0) rotate(18deg) scale(0.58);
-  }
-  12% {
-    opacity: 1;
-  }
-  58% {
-    opacity: 1;
-    transform: translate3d(205px, -100px, 0) rotate(-10deg) scale(0.92);
-  }
-  100% {
-    opacity: 1;
-    transform: translate3d(0, -18px, 0) rotate(-5deg) scale(1);
-  }
-}
-@keyframes draftDealIn3 {
-  0% {
-    opacity: 0;
-    transform: translate3d(600px, -146px, 0) rotate(12deg) scale(0.58);
-  }
-  12% {
-    opacity: 1;
-  }
-  58% {
-    opacity: 1;
-    transform: translate3d(180px, -106px, 0) rotate(0deg) scale(0.92);
-  }
-  100% {
-    opacity: 1;
-    transform: translate3d(0, -22px, 0) rotate(0deg) scale(1);
-  }
-}
-@keyframes draftDealIn4 {
-  0% {
-    opacity: 0;
-    transform: translate3d(580px, -142px, 0) rotate(6deg) scale(0.58);
-  }
-  12% {
-    opacity: 1;
-  }
-  58% {
-    opacity: 1;
-    transform: translate3d(155px, -100px, 0) rotate(10deg) scale(0.92);
-  }
-  100% {
-    opacity: 1;
-    transform: translate3d(0, -18px, 0) rotate(5deg) scale(1);
-  }
-}
-@keyframes draftDealIn5 {
-  0% {
-    opacity: 0;
-    transform: translate3d(560px, -138px, 0) rotate(0deg) scale(0.58);
-  }
-  12% {
-    opacity: 1;
-  }
-  58% {
-    opacity: 1;
-    transform: translate3d(130px, -92px, 0) rotate(18deg) scale(0.92);
-  }
-  100% {
-    opacity: 1;
-    transform: translate3d(0, -12px, 0) rotate(10deg) scale(1);
-  }
-}
-/* Chuyền 4 lá còn lại về hướng deck bên phải */
-.player-hand--draft .player-hand__cards.is-passing .daily-draft-card:not(.daily-draft-card--selected) {
-  transform-origin: center center !important;
-  animation: draftPassToDeckFinal 1.15s cubic-bezier(0.17, 0.82, 0.24, 1) forwards !important;
-}
-.player-hand--draft .player-hand__cards.is-passing .daily-draft-card--selected {
-  animation: draftChosenIntoPocketFinal 0.85s ease forwards !important;
-}
-@keyframes draftPassToDeckFinal {
-  0% {
-    opacity: 1;
-  }
-  20% {
-    opacity: 1;
-    transform: translate3d(32px, -18px, 0) rotate(6deg) scale(0.98);
-  }
-  62% {
-    opacity: 1;
-    transform: translate3d(420px, -70px, 0) rotate(18deg) scale(0.68);
-  }
-  100% {
-    opacity: 0;
-    transform: translate3d(690px, -122px, 0) rotate(26deg) scale(0.38);
-  }
-}
-@keyframes draftChosenIntoPocketFinal {
-  0% {
-    opacity: 1;
-  }
-  65% {
-    opacity: 1;
-    transform: translate3d(0, -52px, 0) rotate(0deg) scale(1.08);
-  }
-  100% {
-    opacity: 0;
-    transform: translate3d(-40px, -72px, 0) rotate(-4deg) scale(0.85);
-  }
-}
-/* Khi đã hết animation chia bài thì card tương tác lại */
-.player-hand.player-hand--draft:not(.player-hand--dealing) .daily-draft-card {
-  opacity: 1;
+  transform-origin: 50% 118%;
+  transition: transform 180ms cubic-bezier(0.2, 0.95, 0.22, 1.08), filter 140ms ease;
   pointer-events: auto;
 }
-/* Mobile/height thấp: vẫn nâng bài lên để không chìm */
-@media (max-height: 820px) {
-  .player-hand--draft {
-    height: 272px !important;
-    min-height: 272px !important;
-    flex-basis: 272px !important;
-  }
-  .player-hand--draft .player-hand__cards {
-    height: 216px !important;
-    transform: translateY(-18px) !important;
-  }
+.player-hand--draft .daily-draft-card > .hand-card {
+  margin: 0 !important;
+  pointer-events: none !important;
+  transform: none !important;
 }
-/* =========================================
-   HARD FIX: DRAFT DEAL ANIMATION + UNFREEZE CARDS
-   Nguyên nhân lỗi:
-   1) Một số rule cũ đang visibility:hidden / transform:none / pointer-events:none bằng !important.
-   2) Animation cũ gắn vào wrapper nhưng lại bị các rule fan/hover !important phía dưới đè.
-   3) Vì vậy nhìn như không có animation và card bị đơ.
-   Bản này đặt ở CUỐI FILE để thắng toàn bộ override cũ.
-   ========================================= */
-/* Không dùng overlay nữa */
-.real-deal-overlay,
-.real-deal-overlay__card,
-.deck-deal-animation,
-.deck-deal-animation__card,
-.initial-deal-layer,
-.deal-real-slot {
+/* Vị trí ngang tuyệt đối của 7 lá */
+.player-hand--draft .daily-draft-card--1 {
+  left: calc(50% - 180px);
+}
+.player-hand--draft .daily-draft-card--2 {
+  left: calc(50% - 120px);
+}
+.player-hand--draft .daily-draft-card--3 {
+  left: calc(50% - 60px);
+}
+.player-hand--draft .daily-draft-card--4 {
+  left: 50%;
+}
+.player-hand--draft .daily-draft-card--5 {
+  left: calc(50% + 60px);
+}
+.player-hand--draft .daily-draft-card--6 {
+  left: calc(50% + 120px);
+}
+.player-hand--draft .daily-draft-card--7 {
+  left: calc(50% + 180px);
+}
+.player-hand--draft .daily-draft-card--8 {
   display: none !important;
 }
-/* Trong lúc draft dealing: vẫn phải thấy chính các lá thật trong hand */
-.player-hand.player-hand--draft.player-hand--dealing .player-hand__cards > *,
-.player-hand.player-hand--draft.is-dealing .player-hand__cards > * {
-  visibility: visible !important;
-  display: block !important;
+/* Fan sau khi chia xong */
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--1 {
+  transform: translateX(-50%) translateY(-2px) rotate(-21deg);
+  z-index: 11;
 }
-/* Khu hand draft không cắt card */
-.player-hand.player-hand--draft {
-  height: 296px !important;
-  min-height: 296px !important;
-  flex-basis: 296px !important;
-  overflow: visible !important;
-  padding-bottom: 0 !important;
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--2 {
+  transform: translateX(-50%) translateY(-10px) rotate(-14deg);
+  z-index: 12;
 }
-.player-hand.player-hand--draft .player-hand__cards {
-  position: relative !important;
-  height: 238px !important;
-  min-height: 238px !important;
-  overflow: visible !important;
-  align-items: flex-start !important;
-  justify-content: center !important;
-  transform: translateY(-28px) !important;
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--3 {
+  transform: translateX(-50%) translateY(-17px) rotate(-7deg);
+  z-index: 13;
 }
-/* Card con không được ăn pointer event, wrapper nhận click */
-.player-hand.player-hand--draft .draft-deal-slot > .hand-card,
-.player-hand.player-hand--draft .daily-draft-card > .hand-card {
-  pointer-events: none !important;
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--4 {
+  transform: translateX(-50%) translateY(-21px) rotate(0deg);
+  z-index: 14;
 }
-/* Sau khi deal xong: card phải click được lại */
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .draft-deal-slot,
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card {
-  opacity: 1 !important;
-  pointer-events: auto !important;
-  animation: none !important;
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--5 {
+  transform: translateX(-50%) translateY(-17px) rotate(7deg);
+  z-index: 13;
 }
-/* Vị trí fan bình thường */
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--1 {
-  transform: translate3d(0, -16px, 0) rotate(-10deg) !important;
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--6 {
+  transform: translateX(-50%) translateY(-10px) rotate(14deg);
+  z-index: 12;
 }
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--2 {
-  transform: translate3d(0, -22px, 0) rotate(-5deg) !important;
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--7 {
+  transform: translateX(-50%) translateY(-2px) rotate(21deg);
+  z-index: 11;
 }
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--3 {
-  transform: translate3d(0, -28px, 0) rotate(0deg) !important;
+/* Hover rõ và click được cho cả 7 lá */
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card:hover {
+  z-index: 9999;
+  filter: saturate(1.05) contrast(1.02) drop-shadow(0 14px 18px rgba(75, 47, 25, 0.18));
 }
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--4 {
-  transform: translate3d(0, -22px, 0) rotate(5deg) !important;
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--1:hover {
+  transform: translateX(-50%) translateY(-36px) rotate(-13deg) scale(1.025);
 }
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--5 {
-  transform: translate3d(0, -16px, 0) rotate(10deg) !important;
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--2:hover {
+  transform: translateX(-50%) translateY(-40px) rotate(-8deg) scale(1.025);
 }
-/* Hover bình thường, không đơ */
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card:hover {
-  z-index: 60 !important;
-  filter: saturate(1.04) contrast(1.01) !important;
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--3:hover {
+  transform: translateX(-50%) translateY(-44px) rotate(-4deg) scale(1.025);
 }
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--1:hover {
-  transform: translate3d(-4px, -32px, 0) rotate(-8deg) scale(1.018) !important;
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--4:hover {
+  transform: translateX(-50%) translateY(-48px) rotate(0deg) scale(1.03);
 }
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--2:hover {
-  transform: translate3d(-2px, -35px, 0) rotate(-4deg) scale(1.018) !important;
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--5:hover {
+  transform: translateX(-50%) translateY(-44px) rotate(4deg) scale(1.025);
 }
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--3:hover {
-  transform: translate3d(0, -39px, 0) rotate(0deg) scale(1.02) !important;
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--6:hover {
+  transform: translateX(-50%) translateY(-40px) rotate(8deg) scale(1.025);
 }
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--4:hover {
-  transform: translate3d(2px, -35px, 0) rotate(4deg) scale(1.018) !important;
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--7:hover {
+  transform: translateX(-50%) translateY(-36px) rotate(13deg) scale(1.025);
 }
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--5:hover {
-  transform: translate3d(4px, -32px, 0) rotate(8deg) scale(1.018) !important;
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--selected,
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--selected:hover {
+  z-index: 99999 !important;
+  filter: drop-shadow(0 18px 22px rgba(75, 47, 25, 0.28));
+  transform: translateX(-50%) translateY(-60px) rotate(0deg) scale(1.055) !important;
 }
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--selected,
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--selected:hover {
-  z-index: 90 !important;
-  transform: translate3d(0, -48px, 0) rotate(0deg) scale(1.04) !important;
+/* Animation chia bài: chạy trực tiếp trên wrapper */
+.player-hand--draft.player-hand--dealing .daily-draft-card,
+.player-hand--draft.is-dealing .daily-draft-card {
+  pointer-events: none;
+  animation-duration: 1.08s;
+  animation-timing-function: cubic-bezier(0.16, 0.9, 0.24, 1);
+  animation-fill-mode: both;
+  will-change: transform, opacity;
 }
-/* =========================
-   ANIMATION CHIA BÀI THẬT
-   Dùng chính wrapper .draft-deal-slot trong hand.
-   ========================= */
-.player-hand.player-hand--draft.player-hand--dealing .draft-deal-slot,
-.player-hand.player-hand--draft.is-dealing .draft-deal-slot {
-  opacity: 1 !important;
-  pointer-events: none !important;
-  will-change: transform, opacity !important;
-  backface-visibility: hidden !important;
-  transform-style: preserve-3d !important;
-  animation-duration: 1.86s !important;
-  animation-timing-function: cubic-bezier(0.16, 0.9, 0.24, 1) !important;
-  animation-fill-mode: both !important;
-}
-/* Child card không được tự transform; wrapper bay */
-.player-hand.player-hand--draft.player-hand--dealing .draft-deal-slot > .hand-card,
-.player-hand.player-hand--draft.is-dealing .draft-deal-slot > .hand-card,
-.player-hand.player-hand--draft.player-hand--dealing .draft-deal-slot > .hand-card:hover,
-.player-hand.player-hand--draft.is-dealing .draft-deal-slot > .hand-card:hover {
+.player-hand--draft.player-hand--dealing .daily-draft-card > .hand-card,
+.player-hand--draft.is-dealing .daily-draft-card > .hand-card {
   transform: none !important;
   animation: none !important;
   transition: none !important;
 }
-/* Mỗi lá từ deck bên phải bay về fan */
-.player-hand.player-hand--draft.player-hand--dealing .draft-deal-slot.daily-draft-card--1,
-.player-hand.player-hand--draft.is-dealing .draft-deal-slot.daily-draft-card--1 {
-  animation-name: draftRealDealSlot1 !important;
-  animation-delay: 0ms !important;
-  z-index: 101 !important;
+.player-hand--draft.player-hand--dealing .daily-draft-card--1,
+.player-hand--draft.is-dealing .daily-draft-card--1 {
+  animation-name: draftDeal7Clean1;
+  animation-delay: 0ms;
+  z-index: 101;
 }
-.player-hand.player-hand--draft.player-hand--dealing .draft-deal-slot.daily-draft-card--2,
-.player-hand.player-hand--draft.is-dealing .draft-deal-slot.daily-draft-card--2 {
-  animation-name: draftRealDealSlot2 !important;
-  animation-delay: 150ms !important;
-  z-index: 102 !important;
+.player-hand--draft.player-hand--dealing .daily-draft-card--2,
+.player-hand--draft.is-dealing .daily-draft-card--2 {
+  animation-name: draftDeal7Clean2;
+  animation-delay: 85ms;
+  z-index: 102;
 }
-.player-hand.player-hand--draft.player-hand--dealing .draft-deal-slot.daily-draft-card--3,
-.player-hand.player-hand--draft.is-dealing .draft-deal-slot.daily-draft-card--3 {
-  animation-name: draftRealDealSlot3 !important;
-  animation-delay: 300ms !important;
-  z-index: 103 !important;
+.player-hand--draft.player-hand--dealing .daily-draft-card--3,
+.player-hand--draft.is-dealing .daily-draft-card--3 {
+  animation-name: draftDeal7Clean3;
+  animation-delay: 170ms;
+  z-index: 103;
 }
-.player-hand.player-hand--draft.player-hand--dealing .draft-deal-slot.daily-draft-card--4,
-.player-hand.player-hand--draft.is-dealing .draft-deal-slot.daily-draft-card--4 {
-  animation-name: draftRealDealSlot4 !important;
-  animation-delay: 450ms !important;
-  z-index: 102 !important;
+.player-hand--draft.player-hand--dealing .daily-draft-card--4,
+.player-hand--draft.is-dealing .daily-draft-card--4 {
+  animation-name: draftDeal7Clean4;
+  animation-delay: 255ms;
+  z-index: 104;
 }
-.player-hand.player-hand--draft.player-hand--dealing .draft-deal-slot.daily-draft-card--5,
-.player-hand.player-hand--draft.is-dealing .draft-deal-slot.daily-draft-card--5 {
-  animation-name: draftRealDealSlot5 !important;
-  animation-delay: 600ms !important;
-  z-index: 101 !important;
+.player-hand--draft.player-hand--dealing .daily-draft-card--5,
+.player-hand--draft.is-dealing .daily-draft-card--5 {
+  animation-name: draftDeal7Clean5;
+  animation-delay: 340ms;
+  z-index: 103;
 }
-@keyframes draftRealDealSlot1 {
+.player-hand--draft.player-hand--dealing .daily-draft-card--6,
+.player-hand--draft.is-dealing .daily-draft-card--6 {
+  animation-name: draftDeal7Clean6;
+  animation-delay: 425ms;
+  z-index: 102;
+}
+.player-hand--draft.player-hand--dealing .daily-draft-card--7,
+.player-hand--draft.is-dealing .daily-draft-card--7 {
+  animation-name: draftDeal7Clean7;
+  animation-delay: 510ms;
+  z-index: 101;
+}
+@keyframes draftDeal7Clean1 {
   0% {
     opacity: 0;
-    transform: translate3d(720px, -132px, 120px) rotate(-26deg) rotateY(-16deg) scale(0.72);
-  }
-  12% {
-    opacity: 1;
-  }
-  24% {
-    transform: translate3d(590px, -192px, 170px) rotate(-34deg) rotateY(-18deg) scale(0.86);
-  }
-  62% {
-    transform: translate3d(220px, -98px, 110px) rotate(-22deg) rotateY(10deg) scale(0.97);
-  }
-  100% {
-    opacity: 1;
-    transform: translate3d(0, -16px, 0) rotate(-10deg) rotateY(0deg) scale(1);
-  }
-}
-@keyframes draftRealDealSlot2 {
-  0% {
-    opacity: 0;
-    transform: translate3d(700px, -136px, 120px) rotate(-18deg) rotateY(-14deg) scale(0.72);
-  }
-  12% {
-    opacity: 1;
-  }
-  24% {
-    transform: translate3d(560px, -198px, 170px) rotate(-24deg) rotateY(-16deg) scale(0.86);
-  }
-  62% {
-    transform: translate3d(185px, -108px, 110px) rotate(-12deg) rotateY(8deg) scale(0.97);
-  }
-  100% {
-    opacity: 1;
-    transform: translate3d(0, -22px, 0) rotate(-5deg) rotateY(0deg) scale(1);
-  }
-}
-@keyframes draftRealDealSlot3 {
-  0% {
-    opacity: 0;
-    transform: translate3d(680px, -140px, 120px) rotate(-10deg) rotateY(-12deg) scale(0.72);
-  }
-  12% {
-    opacity: 1;
-  }
-  24% {
-    transform: translate3d(530px, -204px, 170px) rotate(-12deg) rotateY(-14deg) scale(0.86);
-  }
-  62% {
-    transform: translate3d(150px, -116px, 110px) rotate(0deg) rotateY(6deg) scale(0.97);
-  }
-  100% {
-    opacity: 1;
-    transform: translate3d(0, -28px, 0) rotate(0deg) rotateY(0deg) scale(1);
-  }
-}
-@keyframes draftRealDealSlot4 {
-  0% {
-    opacity: 0;
-    transform: translate3d(660px, -136px, 120px) rotate(0deg) rotateY(-10deg) scale(0.72);
-  }
-  12% {
-    opacity: 1;
-  }
-  24% {
-    transform: translate3d(500px, -198px, 170px) rotate(10deg) rotateY(-12deg) scale(0.86);
-  }
-  62% {
-    transform: translate3d(115px, -108px, 110px) rotate(12deg) rotateY(4deg) scale(0.97);
-  }
-  100% {
-    opacity: 1;
-    transform: translate3d(0, -22px, 0) rotate(5deg) rotateY(0deg) scale(1);
-  }
-}
-@keyframes draftRealDealSlot5 {
-  0% {
-    opacity: 0;
-    transform: translate3d(640px, -132px, 120px) rotate(10deg) rotateY(-8deg) scale(0.72);
-  }
-  12% {
-    opacity: 1;
-  }
-  24% {
-    transform: translate3d(470px, -192px, 170px) rotate(24deg) rotateY(-10deg) scale(0.86);
-  }
-  62% {
-    transform: translate3d(80px, -98px, 110px) rotate(22deg) rotateY(2deg) scale(0.97);
-  }
-  100% {
-    opacity: 1;
-    transform: translate3d(0, -16px, 0) rotate(10deg) rotateY(0deg) scale(1);
-  }
-}
-/* Chuyền bài bằng chính wrapper, không dùng overlay */
-.player-hand.player-hand--draft .player-hand__cards.is-passing .draft-deal-slot:not(.daily-draft-card--selected) {
-  animation: draftRealPassToDeck 1.08s cubic-bezier(0.17, 0.82, 0.24, 1) forwards !important;
-  transform-origin: center center !important;
-  pointer-events: none !important;
-}
-.player-hand.player-hand--draft .player-hand__cards.is-passing .draft-deal-slot.daily-draft-card--selected {
-  animation: draftRealChosenKeep 0.82s ease forwards !important;
-  pointer-events: none !important;
-}
-@keyframes draftRealPassToDeck {
-  0% {
-    opacity: 1;
-  }
-  28% {
-    opacity: 1;
-    transform: translate3d(90px, -30px, 80px) rotate(8deg) rotateY(-8deg) scale(0.95);
-  }
-  72% {
-    opacity: 1;
-    transform: translate3d(455px, -86px, 120px) rotate(18deg) rotateY(-16deg) scale(0.66);
-  }
-  100% {
-    opacity: 0;
-    transform: translate3d(720px, -132px, 0) rotate(28deg) rotateY(-24deg) scale(0.38);
-  }
-}
-@keyframes draftRealChosenKeep {
-  0% {
-    opacity: 1;
-  }
-  70% {
-    opacity: 1;
-    transform: translate3d(0, -54px, 0) rotate(0deg) scale(1.08);
-  }
-  100% {
-    opacity: 0;
-    transform: translate3d(-42px, -76px, 0) rotate(-4deg) scale(0.86);
-  }
-}
-/* =========================================
-   TRUE FIX: ANIMATE WITH translate/rotate/scale, NOT transform
-   Vì các rule fan card cũ dùng transform: ... !important,
-   mọi @keyframes transform đều bị đè nên nhìn như không có animation.
-   Bản này dùng CSS individual transform properties: translate / rotate / scale.
-   Các property này không bị transform: ... !important chặn.
-   ========================================= */
-/* Chuẩn hóa animation state */
-.player-hand.player-hand--draft .draft-deal-slot {
-  translate: 0 0 0;
-  rotate: 0deg;
-  scale: 1;
-}
-/* Đảm bảo card không bị đơ sau khi hết dealing/passing */
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .player-hand__cards:not(.is-passing) .draft-deal-slot {
-  pointer-events: auto !important;
-  opacity: 1 !important;
-  animation: none !important;
-  translate: 0 0 0 !important;
-  rotate: 0deg !important;
-  scale: 1 !important;
-}
-/* =========================
-   CHIA BÀI VÀO HAND DRAFT
-   ========================= */
-.player-hand.player-hand--draft.player-hand--dealing .draft-deal-slot,
-.player-hand.player-hand--draft.is-dealing .draft-deal-slot {
-  visibility: visible !important;
-  display: block !important;
-  opacity: 0;
-  pointer-events: none !important;
-  will-change: translate, rotate, scale, opacity !important;
-  animation-duration: 1.86s !important;
-  animation-timing-function: cubic-bezier(0.16, 0.9, 0.24, 1) !important;
-  animation-fill-mode: both !important;
-}
-/* Child card đứng yên trong wrapper; wrapper là thứ bay */
-.player-hand.player-hand--draft.player-hand--dealing .draft-deal-slot > .hand-card,
-.player-hand.player-hand--draft.is-dealing .draft-deal-slot > .hand-card {
-  animation: none !important;
-  transition: none !important;
-  transform: none !important;
-}
-.player-hand.player-hand--draft.player-hand--dealing .draft-deal-slot.daily-draft-card--1,
-.player-hand.player-hand--draft.is-dealing .draft-deal-slot.daily-draft-card--1 {
-  animation-name: draftDealIndividual1 !important;
-  animation-delay: 0ms !important;
-}
-.player-hand.player-hand--draft.player-hand--dealing .draft-deal-slot.daily-draft-card--2,
-.player-hand.player-hand--draft.is-dealing .draft-deal-slot.daily-draft-card--2 {
-  animation-name: draftDealIndividual2 !important;
-  animation-delay: 150ms !important;
-}
-.player-hand.player-hand--draft.player-hand--dealing .draft-deal-slot.daily-draft-card--3,
-.player-hand.player-hand--draft.is-dealing .draft-deal-slot.daily-draft-card--3 {
-  animation-name: draftDealIndividual3 !important;
-  animation-delay: 300ms !important;
-}
-.player-hand.player-hand--draft.player-hand--dealing .draft-deal-slot.daily-draft-card--4,
-.player-hand.player-hand--draft.is-dealing .draft-deal-slot.daily-draft-card--4 {
-  animation-name: draftDealIndividual4 !important;
-  animation-delay: 450ms !important;
-}
-.player-hand.player-hand--draft.player-hand--dealing .draft-deal-slot.daily-draft-card--5,
-.player-hand.player-hand--draft.is-dealing .draft-deal-slot.daily-draft-card--5 {
-  animation-name: draftDealIndividual5 !important;
-  animation-delay: 600ms !important;
-}
-@keyframes draftDealIndividual1 {
-  0% {
-    opacity: 0;
-    translate: 720px -132px 120px;
-    rotate: -18deg;
-    scale: 0.7;
-  }
-  12% {
-    opacity: 1;
-  }
-  24% {
-    opacity: 1;
-    translate: 590px -192px 170px;
-    rotate: -26deg;
-    scale: 0.84;
-  }
-  62% {
-    opacity: 1;
-    translate: 220px -98px 110px;
-    rotate: -12deg;
-    scale: 0.96;
-  }
-  100% {
-    opacity: 1;
-    translate: 0 0 0;
-    rotate: 0deg;
-    scale: 1;
-  }
-}
-@keyframes draftDealIndividual2 {
-  0% {
-    opacity: 0;
-    translate: 700px -136px 120px;
-    rotate: -12deg;
-    scale: 0.7;
-  }
-  12% {
-    opacity: 1;
-  }
-  24% {
-    opacity: 1;
-    translate: 560px -198px 170px;
-    rotate: -18deg;
-    scale: 0.84;
-  }
-  62% {
-    opacity: 1;
-    translate: 185px -108px 110px;
-    rotate: -7deg;
-    scale: 0.96;
-  }
-  100% {
-    opacity: 1;
-    translate: 0 0 0;
-    rotate: 0deg;
-    scale: 1;
-  }
-}
-@keyframes draftDealIndividual3 {
-  0% {
-    opacity: 0;
-    translate: 680px -140px 120px;
-    rotate: -6deg;
-    scale: 0.7;
-  }
-  12% {
-    opacity: 1;
-  }
-  24% {
-    opacity: 1;
-    translate: 530px -204px 170px;
-    rotate: -8deg;
-    scale: 0.84;
-  }
-  62% {
-    opacity: 1;
-    translate: 150px -116px 110px;
-    rotate: 0deg;
-    scale: 0.96;
-  }
-  100% {
-    opacity: 1;
-    translate: 0 0 0;
-    rotate: 0deg;
-    scale: 1;
-  }
-}
-@keyframes draftDealIndividual4 {
-  0% {
-    opacity: 0;
-    translate: 660px -136px 120px;
-    rotate: 2deg;
-    scale: 0.7;
-  }
-  12% {
-    opacity: 1;
-  }
-  24% {
-    opacity: 1;
-    translate: 500px -198px 170px;
-    rotate: 10deg;
-    scale: 0.84;
-  }
-  62% {
-    opacity: 1;
-    translate: 115px -108px 110px;
-    rotate: 7deg;
-    scale: 0.96;
-  }
-  100% {
-    opacity: 1;
-    translate: 0 0 0;
-    rotate: 0deg;
-    scale: 1;
-  }
-}
-@keyframes draftDealIndividual5 {
-  0% {
-    opacity: 0;
-    translate: 640px -132px 120px;
-    rotate: 8deg;
-    scale: 0.7;
-  }
-  12% {
-    opacity: 1;
-  }
-  24% {
-    opacity: 1;
-    translate: 470px -192px 170px;
-    rotate: 18deg;
-    scale: 0.84;
-  }
-  62% {
-    opacity: 1;
-    translate: 80px -98px 110px;
-    rotate: 12deg;
-    scale: 0.96;
-  }
-  100% {
-    opacity: 1;
-    translate: 0 0 0;
-    rotate: 0deg;
-    scale: 1;
-  }
-}
-/* =========================
-   CHUYỀN BÀI VÀO DECK
-   ========================= */
-.player-hand.player-hand--draft .player-hand__cards.is-passing .draft-deal-slot:not(.daily-draft-card--selected) {
-  pointer-events: none !important;
-  will-change: translate, rotate, scale, opacity !important;
-  animation: draftPassIndividualToDeck 1.08s cubic-bezier(0.17, 0.82, 0.24, 1) forwards !important;
-}
-.player-hand.player-hand--draft .player-hand__cards.is-passing .draft-deal-slot.daily-draft-card--selected {
-  pointer-events: none !important;
-  will-change: translate, rotate, scale, opacity !important;
-  animation: draftChosenIndividualKeep 0.82s ease forwards !important;
-}
-@keyframes draftPassIndividualToDeck {
-  0% {
-    opacity: 1;
-    translate: 0 0 0;
-    rotate: 0deg;
-    scale: 1;
-  }
-  28% {
-    opacity: 1;
-    translate: 90px -30px 80px;
-    rotate: 8deg;
-    scale: 0.95;
-  }
-  72% {
-    opacity: 1;
-    translate: 455px -86px 120px;
-    rotate: 18deg;
-    scale: 0.66;
-  }
-  100% {
-    opacity: 0;
-    translate: 720px -132px 0;
-    rotate: 28deg;
-    scale: 0.38;
-  }
-}
-@keyframes draftChosenIndividualKeep {
-  0% {
-    opacity: 1;
-    translate: 0 0 0;
-    rotate: 0deg;
-    scale: 1;
-  }
-  70% {
-    opacity: 1;
-    translate: 0 -54px 0;
-    rotate: 0deg;
-    scale: 1.08;
-  }
-  100% {
-    opacity: 0;
-    translate: -42px -76px 0;
-    rotate: -4deg;
-    scale: 0.86;
-  }
-}
-/* Chống trạng thái đơ sau khi class is-passing biến mất */
-.player-hand.player-hand--draft .player-hand__cards:not(.is-passing) .draft-deal-slot {
-  translate: 0 0 0;
-  rotate: 0deg;
-  scale: 1;
-}
-/* Nâng lá lên thêm một chút cho khỏi chìm */
-.player-hand.player-hand--draft .player-hand__cards {
-  transform: translateY(-32px) !important;
-  overflow: visible !important;
-}
-/* =========================================
-   SMOOTHER DRAFT PASS-INTO-DECK ANIMATION
-   Giữ animation chia bài ra như hiện tại.
-   Chỉ sửa đoạn đưa 4 lá còn lại vào deck cho mềm hơn:
-   - lá hơi nhấc lên
-   - gom thành cụm
-   - bay theo cung về deck
-   - thu nhỏ/ẩn dần tự nhiên hơn
-   ========================================= */
-/* Mỗi vị trí có quỹ đạo hơi khác nhau để không bay cứng như 1 khối */
-.player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--1 {
-  --pass-gather-x: 58px;
-  --pass-gather-y: -30px;
-  --pass-arc-x: 285px;
-  --pass-arc-y: -118px;
-  --pass-end-x: 735px;
-  --pass-end-y: -158px;
-  --pass-r1: -5deg;
-  --pass-r2: 14deg;
-  --pass-r3: 31deg;
-}
-.player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--2 {
-  --pass-gather-x: 42px;
-  --pass-gather-y: -36px;
-  --pass-arc-x: 300px;
-  --pass-arc-y: -126px;
-  --pass-end-x: 755px;
-  --pass-end-y: -164px;
-  --pass-r1: -2deg;
-  --pass-r2: 17deg;
-  --pass-r3: 35deg;
-}
-.player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--3 {
-  --pass-gather-x: 26px;
-  --pass-gather-y: -42px;
-  --pass-arc-x: 315px;
-  --pass-arc-y: -132px;
-  --pass-end-x: 775px;
-  --pass-end-y: -168px;
-  --pass-r1: 2deg;
-  --pass-r2: 20deg;
-  --pass-r3: 39deg;
-}
-.player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--4 {
-  --pass-gather-x: 12px;
-  --pass-gather-y: -36px;
-  --pass-arc-x: 330px;
-  --pass-arc-y: -126px;
-  --pass-end-x: 795px;
-  --pass-end-y: -164px;
-  --pass-r1: 5deg;
-  --pass-r2: 23deg;
-  --pass-r3: 43deg;
-}
-.player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--5 {
-  --pass-gather-x: 0px;
-  --pass-gather-y: -30px;
-  --pass-arc-x: 345px;
-  --pass-arc-y: -118px;
-  --pass-end-x: 815px;
-  --pass-end-y: -158px;
-  --pass-r1: 8deg;
-  --pass-r2: 26deg;
-  --pass-r3: 47deg;
-}
-/* Stagger rất nhẹ để giống đang gom từng lá rồi đẩy sang deck */
-.player-hand.player-hand--draft .player-hand__cards.is-passing .draft-deal-slot.daily-draft-card--1:not(.daily-draft-card--selected) {
-  animation-delay: 0ms !important;
-}
-.player-hand.player-hand--draft .player-hand__cards.is-passing .draft-deal-slot.daily-draft-card--2:not(.daily-draft-card--selected) {
-  animation-delay: 45ms !important;
-}
-.player-hand.player-hand--draft .player-hand__cards.is-passing .draft-deal-slot.daily-draft-card--3:not(.daily-draft-card--selected) {
-  animation-delay: 90ms !important;
-}
-.player-hand.player-hand--draft .player-hand__cards.is-passing .draft-deal-slot.daily-draft-card--4:not(.daily-draft-card--selected) {
-  animation-delay: 135ms !important;
-}
-.player-hand.player-hand--draft .player-hand__cards.is-passing .draft-deal-slot.daily-draft-card--5:not(.daily-draft-card--selected) {
-  animation-delay: 180ms !important;
-}
-/* Override animation chuyền bài cũ bằng bản mềm hơn */
-.player-hand.player-hand--draft .player-hand__cards.is-passing .draft-deal-slot:not(.daily-draft-card--selected) {
-  pointer-events: none !important;
-  will-change: translate, rotate, scale, opacity !important;
-  animation-name: draftPassSmoothIntoDeck !important;
-  animation-duration: 1.34s !important;
-  animation-timing-function: cubic-bezier(0.18, 0.82, 0.18, 1) !important;
-  animation-fill-mode: forwards !important;
-}
-/* Lá được chọn: không biến mất cụt; nó nhấc lên như được cất vào pile đã giữ */
-.player-hand.player-hand--draft .player-hand__cards.is-passing .draft-deal-slot.daily-draft-card--selected {
-  pointer-events: none !important;
-  will-change: translate, rotate, scale, opacity !important;
-  animation-name: draftChosenSoftKeep !important;
-  animation-duration: 1.04s !important;
-  animation-timing-function: cubic-bezier(0.18, 0.82, 0.18, 1) !important;
-  animation-fill-mode: forwards !important;
-  animation-delay: 0ms !important;
-}
-@keyframes draftPassSmoothIntoDeck {
-  0% {
-    opacity: 1;
-    translate: 0 0 0;
-    rotate: 0deg;
-    scale: 1;
-  }
-  12% {
-    opacity: 1;
-    translate: 0 -16px 24px;
-    rotate: -1deg;
-    scale: 1.015;
-  }
-  28% {
-    opacity: 1;
-    translate: var(--pass-gather-x) var(--pass-gather-y) 72px;
-    rotate: var(--pass-r1);
-    scale: 0.96;
-  }
-  52% {
-    opacity: 1;
-    translate: var(--pass-arc-x) var(--pass-arc-y) 150px;
-    rotate: var(--pass-r2);
-    scale: 0.78;
-  }
-  78% {
-    opacity: 0.82;
-    translate: calc(var(--pass-end-x) - 95px) calc(var(--pass-end-y) + 16px) 70px;
-    rotate: var(--pass-r3);
-    scale: 0.52;
-  }
-  100% {
-    opacity: 0;
-    translate: var(--pass-end-x) var(--pass-end-y) 0;
-    rotate: calc(var(--pass-r3) + 8deg);
-    scale: 0.34;
-  }
-}
-@keyframes draftChosenSoftKeep {
-  0% {
-    opacity: 1;
-    translate: 0 0 0;
-    rotate: 0deg;
-    scale: 1;
+    transform: translateX(-50%) translate3d(610px, -126px, 0) rotate(25deg) scale(0.58);
   }
   18% {
     opacity: 1;
-    translate: 0 -18px 40px;
-    rotate: 0deg;
-    scale: 1.04;
-  }
-  52% {
-    opacity: 1;
-    translate: -24px -60px 84px;
-    rotate: -3deg;
-    scale: 1.08;
-  }
-  82% {
-    opacity: 0.72;
-    translate: -58px -88px 30px;
-    rotate: -7deg;
-    scale: 0.9;
   }
   100% {
-    opacity: 0;
-    translate: -74px -104px 0;
-    rotate: -9deg;
-    scale: 0.72;
+    opacity: 1;
+    transform: translateX(-50%) translateY(-2px) rotate(-21deg) scale(1);
   }
 }
-/* Cho trạng thái passing tồn tại nhìn tự nhiên hơn một chút */
-.player-hand.player-hand--draft .player-hand__cards.is-passing {
-  pointer-events: none !important;
-}
-/* =========================================
-   FINAL MOTION STABILITY PATCH
-   Mục tiêu:
-   - Không dùng thẻ giả, không đổi visual của card.
-   - Không đổi card thành "surface" rút gọn.
-   - Giảm giật bằng cách:
-     1) layout card trước, sau đó mới add class deal-active/pass-active bằng requestAnimationFrame
-     2) không rerender toàn arena ở frame cuối animation
-     3) animation chỉ chạy trên wrapper .draft-deal-slot bằng translate/rotate/scale
-     4) giữ nguyên ảnh, text, footer, kích thước của lá thật
-   ========================================= */
-/* Tắt overlay/fake/deck animation cũ nếu còn sót */
-.real-deal-overlay,
-.real-deal-overlay__card,
-.deck-deal-animation,
-.deck-deal-animation__card,
-.initial-deal-layer,
-.deal-real-slot {
-  display: none !important;
-}
-.game-shell:has(.player-hand__cards.is-passing) .deck-card-stack,
-.game-shell:has(.player-hand--dealing) .deck-card-stack,
-.game-shell:has(.is-dealing) .deck-card-stack,
-.deck-pile-panel:has(.deck-deal-animation__card) .deck-card-stack {
-  animation: none !important;
-}
-/* Không cho các block patch cũ ẩn/biến dạng nội dung card */
-.player-hand.player-hand--draft .draft-deal-slot > .hand-card {
-  width: var(--hand-card-w) !important;
-  height: var(--hand-card-h) !important;
-  min-height: var(--hand-card-h) !important;
-  overflow: hidden !important;
-}
-.player-hand.player-hand--draft .draft-deal-slot .hand-card__header {
-  height: 50px !important;
-  flex: 0 0 50px !important;
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: flex-start !important;
-  gap: 6px !important;
-  padding: 7px 8px 4px !important;
-  min-height: 0 !important;
-}
-.player-hand.player-hand--draft .draft-deal-slot .hand-card__image {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  height: 58px !important;
-  flex: 0 0 58px !important;
-}
-.player-hand.player-hand--draft .draft-deal-slot .hand-card__icons {
-  display: flex !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-.player-hand.player-hand--draft .draft-deal-slot .hand-card__content {
-  display: grid !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  grid-template-rows: 14px 31px 24px !important;
-}
-.player-hand.player-hand--draft .draft-deal-slot .hand-card__footer {
-  display: grid !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  height: 27px !important;
-  flex: 0 0 27px !important;
-}
-.player-hand.player-hand--draft .draft-deal-slot .hand-card__name {
-  font-size: 11px !important;
-  line-height: 1.02 !important;
-}
-.player-hand.player-hand--draft .draft-deal-slot .hand-card__name--sm {
-  font-size: 9.7px !important;
-  line-height: 1.02 !important;
-}
-.player-hand.player-hand--draft .draft-deal-slot .hand-card__name--xs {
-  font-size: 8.6px !important;
-  line-height: 1.02 !important;
-}
-.player-hand.player-hand--draft .draft-deal-slot .hand-card__city {
-  font-size: 7.7px !important;
-  line-height: 1.05 !important;
-}
-.player-hand.player-hand--draft .draft-deal-slot .hand-card__city--sm {
-  font-size: 6.8px !important;
-  line-height: 1.04 !important;
-}
-.player-hand.player-hand--draft .draft-deal-slot .hand-card__city--xs {
-  font-size: 6.4px !important;
-  line-height: 1.03 !important;
-}
-/* Wrapper nhận animation, card con đứng yên để visual giữ nguyên */
-.player-hand.player-hand--draft .draft-deal-slot > .hand-card,
-.player-hand.player-hand--draft .draft-deal-slot > .hand-card:hover {
-  transform: none !important;
-  animation: none !important;
-  transition: none !important;
-}
-/* Base: card bình thường không bị đơ */
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .player-hand__cards:not(.is-passing) .draft-deal-slot {
-  opacity: 1 !important;
-  pointer-events: auto !important;
-  animation: none !important;
-  translate: 0 0 !important;
-  rotate: 0deg !important;
-  scale: 1 !important;
-  will-change: auto !important;
-}
-/* Đợi browser layout xong 2 frame rồi mới chạy animation, tránh giật frame đầu */
-.player-hand.player-hand--draft.player-hand--dealing:not(.deal-active) .draft-deal-slot,
-.player-hand.player-hand--draft.is-dealing:not(.deal-active) .draft-deal-slot {
-  opacity: 0 !important;
-  pointer-events: none !important;
-  animation: none !important;
-}
-.player-hand.player-hand--draft.player-hand--dealing.deal-active .draft-deal-slot,
-.player-hand.player-hand--draft.is-dealing.deal-active .draft-deal-slot {
-  opacity: 1 !important;
-  pointer-events: none !important;
-  will-change: translate, rotate, scale, opacity !important;
-  backface-visibility: hidden !important;
-  transform-style: flat !important;
-  animation-duration: 1080ms !important;
-  animation-timing-function: cubic-bezier(0.2, 0.82, 0.22, 1) !important;
-  animation-fill-mode: both !important;
-}
-/* Deal: dùng individual transform properties để không bị transform fan !important đè */
-.player-hand.player-hand--draft.deal-active .draft-deal-slot.daily-draft-card--1 {
-  animation-name: stableDraftDeal1 !important;
-  animation-delay: 0ms !important;
-}
-.player-hand.player-hand--draft.deal-active .draft-deal-slot.daily-draft-card--2 {
-  animation-name: stableDraftDeal2 !important;
-  animation-delay: 60ms !important;
-}
-.player-hand.player-hand--draft.deal-active .draft-deal-slot.daily-draft-card--3 {
-  animation-name: stableDraftDeal3 !important;
-  animation-delay: 120ms !important;
-}
-.player-hand.player-hand--draft.deal-active .draft-deal-slot.daily-draft-card--4 {
-  animation-name: stableDraftDeal4 !important;
-  animation-delay: 180ms !important;
-}
-.player-hand.player-hand--draft.deal-active .draft-deal-slot.daily-draft-card--5 {
-  animation-name: stableDraftDeal5 !important;
-  animation-delay: 240ms !important;
-}
-@keyframes stableDraftDeal1 {
+@keyframes draftDeal7Clean2 {
   0% {
     opacity: 0;
-    translate: 430px -80px;
-    rotate: -14deg;
-    scale: 0.78;
+    transform: translateX(-50%) translate3d(560px, -130px, 0) rotate(20deg) scale(0.58);
   }
-  15% {
+  18% {
     opacity: 1;
-  }
-  62% {
-    opacity: 1;
-    translate: 125px -42px;
-    rotate: -9deg;
-    scale: 0.96;
   }
   100% {
     opacity: 1;
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
+    transform: translateX(-50%) translateY(-10px) rotate(-14deg) scale(1);
   }
 }
-@keyframes stableDraftDeal2 {
+@keyframes draftDeal7Clean3 {
   0% {
     opacity: 0;
-    translate: 410px -84px;
-    rotate: -10deg;
-    scale: 0.78;
+    transform: translateX(-50%) translate3d(510px, -134px, 0) rotate(15deg) scale(0.58);
   }
-  15% {
+  18% {
     opacity: 1;
-  }
-  62% {
-    opacity: 1;
-    translate: 110px -47px;
-    rotate: -5deg;
-    scale: 0.96;
   }
   100% {
     opacity: 1;
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
+    transform: translateX(-50%) translateY(-17px) rotate(-7deg) scale(1);
   }
 }
-@keyframes stableDraftDeal3 {
+@keyframes draftDeal7Clean4 {
   0% {
     opacity: 0;
-    translate: 390px -88px;
-    rotate: -4deg;
-    scale: 0.78;
+    transform: translateX(-50%) translate3d(460px, -138px, 0) rotate(8deg) scale(0.58);
   }
-  15% {
+  18% {
     opacity: 1;
-  }
-  62% {
-    opacity: 1;
-    translate: 94px -52px;
-    rotate: 0deg;
-    scale: 0.96;
   }
   100% {
     opacity: 1;
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
+    transform: translateX(-50%) translateY(-21px) rotate(0deg) scale(1);
   }
 }
-@keyframes stableDraftDeal4 {
+@keyframes draftDeal7Clean5 {
   0% {
     opacity: 0;
-    translate: 370px -84px;
-    rotate: 4deg;
-    scale: 0.78;
+    transform: translateX(-50%) translate3d(410px, -134px, 0) rotate(0deg) scale(0.58);
   }
-  15% {
+  18% {
     opacity: 1;
-  }
-  62% {
-    opacity: 1;
-    translate: 78px -47px;
-    rotate: 5deg;
-    scale: 0.96;
   }
   100% {
     opacity: 1;
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
+    transform: translateX(-50%) translateY(-17px) rotate(7deg) scale(1);
   }
 }
-@keyframes stableDraftDeal5 {
+@keyframes draftDeal7Clean6 {
   0% {
     opacity: 0;
-    translate: 350px -80px;
-    rotate: 10deg;
-    scale: 0.78;
+    transform: translateX(-50%) translate3d(360px, -130px, 0) rotate(-8deg) scale(0.58);
   }
-  15% {
+  18% {
     opacity: 1;
-  }
-  62% {
-    opacity: 1;
-    translate: 62px -42px;
-    rotate: 9deg;
-    scale: 0.96;
   }
   100% {
     opacity: 1;
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
+    transform: translateX(-50%) translateY(-10px) rotate(14deg) scale(1);
   }
 }
-/* Pass: cũng đợi 2 frame rồi mới active để tránh snap frame đầu */
-.player-hand.player-hand--draft .player-hand__cards.is-passing:not(.pass-active) .draft-deal-slot {
-  pointer-events: none !important;
-  animation: none !important;
-}
-.player-hand.player-hand--draft .player-hand__cards.is-passing.pass-active .draft-deal-slot {
-  pointer-events: none !important;
-  will-change: translate, rotate, scale, opacity !important;
-  backface-visibility: hidden !important;
-  transform-style: flat !important;
-}
-/* Điểm đích ngắn hơn, không bay quá xa khỏi màn; lá phải đi ít hơn lá trái */
-.player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--1 {
-  --stable-pass-x: 430px;
-  --stable-pass-y: -40px;
-  --stable-pass-r: 14deg;
-}
-.player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--2 {
-  --stable-pass-x: 360px;
-  --stable-pass-y: -44px;
-  --stable-pass-r: 16deg;
-}
-.player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--3 {
-  --stable-pass-x: 292px;
-  --stable-pass-y: -48px;
-  --stable-pass-r: 18deg;
-}
-.player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--4 {
-  --stable-pass-x: 224px;
-  --stable-pass-y: -44px;
-  --stable-pass-r: 20deg;
-}
-.player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--5 {
-  --stable-pass-x: 156px;
-  --stable-pass-y: -40px;
-  --stable-pass-r: 22deg;
-}
-.player-hand.player-hand--draft .player-hand__cards.is-passing.pass-active .draft-deal-slot:not(.daily-draft-card--selected) {
-  animation: stableDraftPassToDeck 620ms cubic-bezier(0.24, 0.76, 0.18, 1) forwards !important;
-}
-.player-hand.player-hand--draft .player-hand__cards.is-passing.pass-active .draft-deal-slot.daily-draft-card--selected {
-  animation: stableDraftChosenKeep 520ms cubic-bezier(0.24, 0.76, 0.18, 1) forwards !important;
-}
-@keyframes stableDraftPassToDeck {
+@keyframes draftDeal7Clean7 {
   0% {
-    opacity: 1;
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
-  }
-  45% {
-    opacity: 1;
-    translate: 96px -18px;
-    rotate: 7deg;
-    scale: 0.74;
-  }
-  88% {
-    opacity: 0.32;
-    translate: var(--stable-pass-x) var(--stable-pass-y);
-    rotate: var(--stable-pass-r);
-    scale: 0.26;
-  }
-  100% {
     opacity: 0;
-    translate: calc(var(--stable-pass-x) + 4px) calc(var(--stable-pass-y) + 2px);
-    rotate: calc(var(--stable-pass-r) + 3deg);
-    scale: 0.18;
+    transform: translateX(-50%) translate3d(310px, -126px, 0) rotate(-15deg) scale(0.58);
   }
-}
-@keyframes stableDraftChosenKeep {
-  0% {
+  18% {
     opacity: 1;
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
-  }
-  58% {
-    opacity: 0.9;
-    translate: 0 -32px;
-    rotate: -2deg;
-    scale: 1.03;
   }
   100% {
-    opacity: 0;
-    translate: -30px -54px;
-    rotate: -6deg;
-    scale: 0.76;
+    opacity: 1;
+    transform: translateX(-50%) translateY(-2px) rotate(21deg) scale(1);
   }
 }
-/* Nếu màn hẹp, giảm quãng bay để card không chui ra ngoài deck panel */
-@media (max-width: 1450px) {
-  .player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--1 {
-    --stable-pass-x: 370px;
-  }
-  .player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--2 {
-    --stable-pass-x: 312px;
-  }
-  .player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--3 {
-    --stable-pass-x: 254px;
-  }
-  .player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--4 {
-    --stable-pass-x: 196px;
-  }
-  .player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--5 {
-    --stable-pass-x: 138px;
-  }
+/* Passing card về deck: giữ hiệu ứng nhẹ, không làm mất click sau đó */
+.player-hand--draft .player-hand__cards.is-passing .daily-draft-card:not(.daily-draft-card--selected) {
+  pointer-events: none;
+  animation: draftPassToDeckClean 0.9s cubic-bezier(0.17, 0.82, 0.24, 1) forwards;
 }
-/* =========================================
-   DRAFT PASS - GATHER THEN DECK INSERT
-   Kiểu Slay the Spire:
-   1) 4 lá không chọn gom nhanh thành một cụm nhỏ
-   2) cụm bài bay vào đúng vị trí deck bên phải
-   3) thu nhỏ và bị "nuốt" vào deck, không bay ra ngoài màn
-   Không dùng thẻ giả / clone / overlay.
-   ========================================= */
-/* Điểm gom nằm gần giữa fan hiện tại.
-   Mỗi lá có offset riêng để tụ lại thành một sấp nhỏ, không chồng hoàn toàn máy móc. */
-.player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--1 {
-  --gather-x: 185px;
-  --gather-y: -18px;
-  --gather-r: -8deg;
-  --deck-in-x: 455px;
-  --deck-in-y: -118px;
-  --deck-r: -8deg;
+.player-hand--draft .player-hand__cards.is-passing .daily-draft-card--selected {
+  pointer-events: none;
+  animation: draftChosenKeepClean 0.65s ease forwards;
 }
-.player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--2 {
-  --gather-x: 96px;
-  --gather-y: -22px;
-  --gather-r: -4deg;
-  --deck-in-x: 380px;
-  --deck-in-y: -120px;
-  --deck-r: -5deg;
-}
-.player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--3 {
-  --gather-x: 8px;
-  --gather-y: -25px;
-  --gather-r: 0deg;
-  --deck-in-x: 305px;
-  --deck-in-y: -122px;
-  --deck-r: -2deg;
-}
-.player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--4 {
-  --gather-x: -82px;
-  --gather-y: -22px;
-  --gather-r: 4deg;
-  --deck-in-x: 230px;
-  --deck-in-y: -120px;
-  --deck-r: 1deg;
-}
-.player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--5 {
-  --gather-x: -172px;
-  --gather-y: -18px;
-  --gather-r: 8deg;
-  --deck-in-x: 155px;
-  --deck-in-y: -118px;
-  --deck-r: 4deg;
-}
-/* Khi pass active: lá không chọn gom trước rồi bay vào deck.
-   Override animation pass cũ. */
-.player-hand.player-hand--draft .player-hand__cards.is-passing.pass-active .draft-deal-slot:not(.daily-draft-card--selected) {
-  animation: draftGatherThenInsertDeck 760ms cubic-bezier(0.22, 0.78, 0.16, 1) forwards !important;
-  animation-delay: 0ms !important;
-  pointer-events: none !important;
-  will-change: translate, rotate, scale, opacity !important;
-  backface-visibility: hidden !important;
-  transform-style: flat !important;
-  z-index: 80 !important;
-}
-/* Lá được chọn: nhấc lên như được giữ lại, nhưng ngắn gọn hơn để không cạnh tranh với pass animation */
-.player-hand.player-hand--draft .player-hand__cards.is-passing.pass-active .draft-deal-slot.daily-draft-card--selected {
-  animation: draftPickedCardPocket 520ms cubic-bezier(0.22, 0.78, 0.16, 1) forwards !important;
-  animation-delay: 0ms !important;
-  pointer-events: none !important;
-  will-change: translate, rotate, scale, opacity !important;
-  z-index: 120 !important;
-}
-/*
-  Key idea:
-  - 0 -> 28%: gom cực nhanh về một cụm ở giữa hand
-  - 28 -> 62%: cả cụm di chuyển sang deck
-  - 62 -> 100%: chui vào sau deck/thu nhỏ/mờ đi
-*/
-@keyframes draftGatherThenInsertDeck {
+@keyframes draftPassToDeckClean {
   0% {
     opacity: 1;
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
   }
-  /* Gom nhanh như gom bài trên tay */
-  28% {
+  25% {
     opacity: 1;
-    translate: var(--gather-x) var(--gather-y);
-    rotate: var(--gather-r);
-    scale: 0.86;
+    transform: translateX(-50%) translateY(-18px) rotate(6deg) scale(0.96);
   }
-  /* Sấp bài bay về mép deck bên phải */
-  62% {
-    opacity: 1;
-    translate: calc(var(--deck-in-x) - 34px) calc(var(--deck-in-y) + 20px);
-    rotate: var(--deck-r);
-    scale: 0.48;
-  }
-  /* Chui vào "miệng" deck, còn thấy một chút */
-  86% {
-    opacity: 0.55;
-    translate: var(--deck-in-x) var(--deck-in-y);
-    rotate: calc(var(--deck-r) - 2deg);
-    scale: 0.24;
-  }
-  /* Biến mất phía sau deck */
-  100% {
-    opacity: 0;
-    translate: calc(var(--deck-in-x) + 8px) calc(var(--deck-in-y) - 2px);
-    rotate: calc(var(--deck-r) - 4deg);
-    scale: 0.14;
-  }
-}
-@keyframes draftPickedCardPocket {
-  0% {
-    opacity: 1;
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
-  }
-  52% {
-    opacity: 1;
-    translate: 0 -36px;
-    rotate: -2deg;
-    scale: 1.035;
-  }
-  100% {
-    opacity: 0;
-    translate: -34px -62px;
-    rotate: -7deg;
-    scale: 0.78;
-  }
-}
-/* Deck nhận bài: scale rất nhẹ, không rung mạnh để tránh lag */
-.game-shell:has(.player-hand__cards.is-passing.pass-active) .deck-card-stack {
-  animation: deckAcceptGatheredCards 360ms ease-out 1 !important;
-}
-@keyframes deckAcceptGatheredCards {
-  0% {
-    scale: 1;
-  }
-  45% {
-    scale: 1.018;
-  }
-  100% {
-    scale: 1;
-  }
-}
-/* Màn nhỏ: điểm vào deck gần hơn để không lố khỏi sidebar */
-@media (max-width: 1450px) {
-  .player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--1 {
-    --deck-in-x: 380px;
-    --deck-in-y: -106px;
-  }
-  .player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--2 {
-    --deck-in-x: 318px;
-    --deck-in-y: -108px;
-  }
-  .player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--3 {
-    --deck-in-x: 256px;
-    --deck-in-y: -110px;
-  }
-  .player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--4 {
-    --deck-in-x: 194px;
-    --deck-in-y: -108px;
-  }
-  .player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--5 {
-    --deck-in-x: 132px;
-    --deck-in-y: -106px;
-  }
-}
-/* =========================================
-   DRAFT PASS - PRECISE GATHER INTO REAL DECK
-   Tham khảo Slay the Spire:
-   1) 4 lá gom nhanh thành một stack nhỏ.
-   2) stack bay thẳng vào đúng mép deck thật.
-   3) deck nằm trên layer, che phần lá khi nó "chui vào".
-   Không dùng fake card / clone / overlay.
-   ========================================= */
-/* Deck nhận bài nằm trên card đang bay, để tạo cảm giác lá chui phía sau sấp bài */
-.deck-pile-panel.deck-receiving,
-.deck-pile-panel.deck-receiving .deck-pile-panel__visual,
-.deck-pile-panel.deck-receiving .deck-card-stack {
-  position: relative !important;
-  z-index: 9999 !important;
-  overflow: visible !important;
-}
-/* Bỏ endpoint cứng cũ. Tọa độ hiện được JS set trực tiếp trên từng lá:
-   --gather-x/y/r và --deck-in-x/y/r */
-.player-hand.player-hand--draft .player-hand__cards.is-passing.pass-active .draft-deal-slot:not(.daily-draft-card--selected) {
-  animation: draftGatherPreciseIntoDeck 880ms cubic-bezier(0.2, 0.8, 0.16, 1) forwards !important;
-  animation-delay: 0ms !important;
-  pointer-events: none !important;
-  will-change: translate, rotate, scale, opacity !important;
-  backface-visibility: hidden !important;
-  transform-style: flat !important;
-  z-index: 80 !important;
-}
-/* Lá chọn vẫn được cất riêng, không bay vào deck */
-.player-hand.player-hand--draft .player-hand__cards.is-passing.pass-active .draft-deal-slot.daily-draft-card--selected {
-  animation: draftPickedCardPocketPrecise 560ms cubic-bezier(0.22, 0.76, 0.18, 1) forwards !important;
-  animation-delay: 0ms !important;
-  pointer-events: none !important;
-  will-change: translate, rotate, scale, opacity !important;
-  z-index: 120 !important;
-}
-/*
-  0-24%: gom nhanh thành một stack.
-  24-58%: stack giữ hình dạng và bay tới gần deck.
-  58-100%: scale nhỏ và bị deck che, giống chui vào discard/draw pile.
-*/
-@keyframes draftGatherPreciseIntoDeck {
-  0% {
-    opacity: 1;
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
-  }
-  24% {
-    opacity: 1;
-    translate: var(--gather-x) var(--gather-y);
-    rotate: var(--gather-r);
-    scale: 0.86;
-  }
-  58% {
-    opacity: 1;
-    translate: var(--deck-in-x) var(--deck-in-y);
-    rotate: var(--deck-r);
-    scale: 0.42;
-  }
-  82% {
+  70% {
     opacity: 0.8;
-    translate: var(--deck-in-x) var(--deck-in-y);
-    rotate: calc(var(--deck-r) - 3deg);
-    scale: 0.24;
+    transform: translateX(-50%) translate3d(460px, -82px, 0) rotate(18deg) scale(0.62);
   }
   100% {
     opacity: 0;
-    translate: calc(var(--deck-in-x) + 8px) calc(var(--deck-in-y) - 4px);
-    rotate: calc(var(--deck-r) - 6deg);
-    scale: 0.12;
+    transform: translateX(-50%) translate3d(690px, -122px, 0) rotate(26deg) scale(0.38);
   }
 }
-/* CSS calc không hỗ trợ nhân biến theo cách trên ở một số browser cũ,
-   nên fallback dùng 1 đoạn linear đơn giản hơn nếu browser bỏ qua keyframe 58%.
-   Các frame 24/82/100 vẫn đảm bảo đúng deck. */
-@keyframes draftPickedCardPocketPrecise {
+@keyframes draftChosenKeepClean {
   0% {
     opacity: 1;
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
   }
-  55% {
+  70% {
     opacity: 1;
-    translate: 0 -34px;
-    rotate: -2deg;
-    scale: 1.035;
+    transform: translateX(-50%) translateY(-62px) rotate(0deg) scale(1.08);
   }
   100% {
     opacity: 0;
-    translate: -34px -62px;
-    rotate: -7deg;
-    scale: 0.78;
+    transform: translateX(-50%) translateY(-96px) rotate(-5deg) scale(0.78);
   }
 }
-/* Deck phản hồi rất nhẹ lúc nhận bài */
-.deck-pile-panel.deck-receiving .deck-card-stack {
-  animation: deckReceivePreciseCards 420ms ease-out 1 !important;
-}
-@keyframes deckReceivePreciseCards {
-  0% {
-    scale: 1;
-  }
-  45% {
-    scale: 1.018;
-  }
-  100% {
-    scale: 1;
-  }
-}
-/* =========================================
-   DRAFT PASS - HIGH ARC SHRINK INTO DECK
-   Giữ nguyên tốc độ và animation gom bài.
-   Chỉ đổi quỹ đạo sau khi gom:
-   - gom nhanh ở 24%
-   - vòng lên trên theo cung lớn
-   - shrink dần trong lúc bay
-   - chui chính xác vào deck thật
-   ========================================= */
-.player-hand.player-hand--draft .player-hand__cards.is-passing.pass-active .draft-deal-slot:not(.daily-draft-card--selected) {
-  animation: draftGatherArcShrinkIntoDeck 880ms cubic-bezier(0.2, 0.8, 0.16, 1) forwards !important;
-  animation-delay: 0ms !important;
-  pointer-events: none !important;
-  will-change: translate, rotate, scale, opacity !important;
-  backface-visibility: hidden !important;
-  transform-style: flat !important;
-  z-index: 80 !important;
-}
-/*
-  Kiểu Slay the Spire:
-  0-24%: gom nhanh như hiện tại
-  24-70%: đi vòng lên trên, nhỏ dần
-  70-100%: rơi/chui vào deck thật
-*/
-@keyframes draftGatherArcShrinkIntoDeck {
-  0% {
-    opacity: 1;
-    translate: 0 0;
-    rotate: 0deg;
-    scale: 1;
-  }
-  /* Giữ nguyên nhịp gom */
-  24% {
-    opacity: 1;
-    translate: var(--gather-x) var(--gather-y);
-    rotate: var(--gather-r);
-    scale: 0.86;
-  }
-  /* Bắt đầu vòng lên trên */
-  44% {
-    opacity: 1;
-    translate: var(--arc1-x) var(--arc1-y);
-    rotate: calc(var(--deck-r) - 10deg);
-    scale: 0.64;
-  }
-  /* Đỉnh cung, nhỏ dần rõ hơn */
-  66% {
-    opacity: 0.98;
-    translate: var(--arc2-x) var(--arc2-y);
-    rotate: calc(var(--deck-r) - 4deg);
-    scale: 0.42;
-  }
-  /* Rơi vào miệng deck */
-  86% {
-    opacity: 0.74;
-    translate: var(--deck-in-x) var(--deck-in-y);
-    rotate: calc(var(--deck-r) - 2deg);
-    scale: 0.22;
-  }
-  /* Chui vào phía sau deck */
-  100% {
-    opacity: 0;
-    translate: calc(var(--deck-in-x) + 8px) calc(var(--deck-in-y) - 4px);
-    rotate: calc(var(--deck-r) - 6deg);
-    scale: 0.12;
-  }
-}
-/* Deck nhận bài nhẹ ở cuối cung, không rung mạnh */
-.deck-pile-panel.deck-receiving .deck-card-stack {
-  animation: deckReceiveArcCards 420ms ease-out 1 !important;
-}
-@keyframes deckReceiveArcCards {
-  0% {
-    scale: 1;
-  }
-  45% {
-    scale: 1.018;
-  }
-  100% {
-    scale: 1;
-  }
-}
-/* =========================================
-   HOLD PREVIEW RESTORE
-   Cho cả 2 phase:
-   - Draft: giữ 0.5s trên daily-draft-card để xem lớn.
-   - Xếp bài: giữ 0.5s trên hand-card để xem lớn
-   ========================================= */
-/* Draft wrapper nhận pointer/click, card con không chặn event */
-.player-hand.player-hand--draft .daily-draft-card,
-.player-hand.player-hand--draft .draft-deal-slot {
-  cursor: pointer !important;
-  pointer-events: auto;
-  touch-action: manipulation;
-}
-.player-hand.player-hand--draft .daily-draft-card > .hand-card,
-.player-hand.player-hand--draft .draft-deal-slot > .hand-card {
-  pointer-events: none !important;
-}
-/* Khi đang phát/chuyền thì không tương tác để tránh mở preview giữa animation */
-.player-hand.player-hand--draft.player-hand--dealing .daily-draft-card,
-.player-hand.player-hand--draft.is-dealing .daily-draft-card,
-.player-hand.player-hand--draft .player-hand__cards.is-passing .daily-draft-card {
-  pointer-events: none !important;
-}
-/* Focused preview phải nằm cao hơn deck/animation layer */
-.focused-card-overlay {
-  z-index: 1000000 !important;
-}
-.focused-card {
-  z-index: 1000001 !important;
-}
-/* Gợi ý nhẹ cho draft card khi có thể giữ xem lớn */
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .player-hand__cards:not(.is-passing) .daily-draft-card:hover > .hand-card {
-  filter: saturate(1.04) contrast(1.01);
-}
-/* =========================================
-   DRAFT SELECTED CARD - FINAL CLEAN
-   Chỉ làm lá nổi/glow. Không tạo nút "CHỌN".
-   Không dùng selector rộng [class*="select"] để tránh ẩn mất lá bài.
-   ========================================= */
-.daily-draft-card,
-.daily-draft-card > .hand-card {
-  pointer-events: auto;
-}
-.player-hand--draft .daily-draft-card--selected {
-  z-index: 80 !important;
-  transform: translateY(-28px) scale(1.06) rotate(0deg) !important;
-  filter: drop-shadow(0 18px 22px rgba(75, 47, 25, 0.28)) !important;
-}
-.player-hand--draft .daily-draft-card--selected > .hand-card,
-.player-hand--draft .daily-draft-card--selected > .hand-card--draft-selected {
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.96), 0 0 0 8px rgba(139, 92, 246, 0.82), 0 18px 34px rgba(75, 47, 25, 0.28) !important;
-}
-/* Draft không được hiện badge/nút chọn ở dưới.
-   Chỉ tắt pseudo + nút cụ thể, không ẩn mọi class có chữ "select". */
-.player-hand--draft .daily-draft-card--selected::before,
-.player-hand--draft .daily-draft-card--selected::after,
-.player-hand--draft .daily-draft-card--selected > .hand-card::before,
-.player-hand--draft .daily-draft-card--selected > .hand-card::after,
-.player-hand--draft .daily-draft-card--selected .hand-card__close,
-.player-hand--draft .daily-draft-card--selected .hand-card__select,
-.player-hand--draft .daily-draft-card--selected .select-button,
-.player-hand--draft .daily-draft-card--selected .selected-badge {
-  display: none !important;
-  content: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-.player-hand--draft .daily-draft-card--selected > .hand-card--common {
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.96), 0 0 0 8px rgba(154, 124, 87, 0.82), 0 18px 34px rgba(75, 47, 25, 0.28) !important;
-}
-.player-hand--draft .daily-draft-card--selected > .hand-card--uncommon {
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.96), 0 0 0 8px rgba(56, 216, 115, 0.82), 0 18px 34px rgba(75, 47, 25, 0.28) !important;
-}
-.player-hand--draft .daily-draft-card--selected > .hand-card--epic {
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.96), 0 0 0 8px rgba(139, 92, 246, 0.84), 0 18px 34px rgba(75, 47, 25, 0.28) !important;
-}
-.player-hand--draft .daily-draft-card--selected > .hand-card--legendary {
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.96), 0 0 0 8px rgba(245, 158, 11, 0.86), 0 18px 34px rgba(75, 47, 25, 0.3) !important;
-}
-/* =========================================
-   PLANNING HAND SOFT STABLE FINAL
-   Mục tiêu:
-   - Không còn cà giật khi rê chuột.
-   - Không đơ hoàn toàn: hover vẫn nâng nhẹ, scale nhẹ.
-   - Không đẩy lá kế bên, vì đẩy lá kế bên là nguyên nhân gây mất hover target.
-   - Không đụng animation chia/phát bài.
-   ========================================= */
-.player-hand:not(.player-hand--draft),
-.player-hand:not(.player-hand--draft) .player-hand__cards {
-  overflow: visible !important;
-  contain: none !important;
-}
-.player-hand:not(.player-hand--draft) .hand-card {
-  backface-visibility: hidden;
-  transform-style: flat !important;
-  will-change: transform;
-  transition: transform 165ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 145ms ease, filter 120ms ease !important;
-}
-/* Tắt hiệu ứng đẩy lá kế bên trong planning.
-   Lá kế bên không di chuyển nữa để hover không bị nhảy target. */
-.player-hand:not(.player-hand--draft) .player-hand__cards:has(.hand-card:hover) .hand-card:not(:hover):not(.hand-card--selected),
-.player-hand:not(.player-hand--draft) .player-hand__cards:has(.hand-card--fan-1:hover) .hand-card--fan-2,
-.player-hand:not(.player-hand--draft) .player-hand__cards:has(.hand-card--fan-2:hover) .hand-card--fan-1,
-.player-hand:not(.player-hand--draft) .player-hand__cards:has(.hand-card--fan-2:hover) .hand-card--fan-3,
-.player-hand:not(.player-hand--draft) .player-hand__cards:has(.hand-card--fan-3:hover) .hand-card--fan-2,
-.player-hand:not(.player-hand--draft) .player-hand__cards:has(.hand-card--fan-3:hover) .hand-card--fan-4,
-.player-hand:not(.player-hand--draft) .player-hand__cards:has(.hand-card--fan-4:hover) .hand-card--fan-3,
-.player-hand:not(.player-hand--draft) .player-hand__cards:has(.hand-card--fan-4:hover) .hand-card--fan-5,
-.player-hand:not(.player-hand--draft) .player-hand__cards:has(.hand-card--fan-5:hover) .hand-card--fan-4 {
-  filter: none !important;
-}
-/* Base fan cố định */
-.player-hand:not(.player-hand--draft) .hand-card--fan-1 {
-  transform: translate3d(0, -2px, 0) rotate(-13deg);
-}
-.player-hand:not(.player-hand--draft) .hand-card--fan-2 {
-  transform: translate3d(0, -6px, 0) rotate(-6deg);
-}
-.player-hand:not(.player-hand--draft) .hand-card--fan-3 {
-  transform: translate3d(0, -9px, 0) rotate(0deg);
-}
-.player-hand:not(.player-hand--draft) .hand-card--fan-4 {
-  transform: translate3d(0, -6px, 0) rotate(6deg);
-}
-.player-hand:not(.player-hand--draft) .hand-card--fan-5 {
-  transform: translate3d(0, -2px, 0) rotate(13deg);
-}
-/* Hover có chuyển động nhẹ, nhưng không bay quá cao để khỏi mất hover target */
-.player-hand:not(.player-hand--draft) .hand-card--fan-1:hover {
-  z-index: 90 !important;
-  transform: translate3d(-3px, -14px, 0) rotate(-10deg) scale(1.025) !important;
-}
-.player-hand:not(.player-hand--draft) .hand-card--fan-2:hover {
-  z-index: 90 !important;
-  transform: translate3d(-2px, -17px, 0) rotate(-4deg) scale(1.025) !important;
-}
-.player-hand:not(.player-hand--draft) .hand-card--fan-3:hover {
-  z-index: 90 !important;
-  transform: translate3d(0, -20px, 0) rotate(0deg) scale(1.03) !important;
-}
-.player-hand:not(.player-hand--draft) .hand-card--fan-4:hover {
-  z-index: 90 !important;
-  transform: translate3d(2px, -17px, 0) rotate(4deg) scale(1.025) !important;
-}
-.player-hand:not(.player-hand--draft) .hand-card--fan-5:hover {
-  z-index: 90 !important;
-  transform: translate3d(3px, -14px, 0) rotate(10deg) scale(1.025) !important;
-}
-.player-hand:not(.player-hand--draft) .hand-card:hover {
-  filter: saturate(1.04) contrast(1.01) !important;
-  box-shadow: 0 18px 34px rgba(70, 45, 20, 0.24), 0 0 0 4px rgba(255, 255, 255, 0.55) !important;
-}
-/* Lá đã chọn vẫn nổi rõ, nhưng cũng giảm độ nhảy để ổn định */
-.player-hand:not(.player-hand--draft) .hand-card--selected,
-.player-hand:not(.player-hand--draft) .hand-card--selected:hover {
-  z-index: 120 !important;
-  transform: translate3d(0, -38px, 0) rotate(0deg) scale(1.045) !important;
-  filter: saturate(1.04) contrast(1.01) !important;
-  box-shadow: 0 22px 42px rgba(70, 45, 20, 0.3), 0 0 0 4px rgba(255, 255, 255, 0.72), 0 0 0 8px rgba(139, 92, 246, 0.18) !important;
-}
-/* Khi kéo bằng clone thì clone vẫn theo chuột ngay */
-.hand-card--drag-clone {
-  transition: none !important;
-  transform: none !important;
-}
-/* =========================================
-   PLANNING SELECTED LAYER ONLY
-   Chỉ sửa layer của lá đã chọn.
-   KHÔNG đổi transform / scale / rotate / layout / nội dung thẻ.
-   ========================================= */
-.player-hand:not(.player-hand--draft) .hand-card--selected {
-  z-index: 9999 !important;
-}
-.player-hand:not(.player-hand--draft) .hand-card:not(.hand-card--selected):hover {
-  z-index: 100 !important;
-}
-.player-hand:not(.player-hand--draft) .hand-card--selected:hover {
-  z-index: 9999 !important;
-}
-/* =========================================
-   ONLINE FIRST DRAFT CLICK FIX
-   Cho phép bấm chọn lá ở vòng draft đầu dù animation deal còn đang chạy.
-   Không ảnh hưởng animation chuyền bài vì .is-passing vẫn khóa tương tác riêng.
-   ========================================= */
-.player-hand.player-hand--draft.player-hand--dealing .daily-draft-card,
-.player-hand.player-hand--draft.is-dealing .daily-draft-card,
-.player-hand.player-hand--draft.player-hand--dealing .draft-deal-slot,
-.player-hand.player-hand--draft.is-dealing .draft-deal-slot {
-  pointer-events: auto !important;
-}
-.player-hand.player-hand--draft .player-hand__cards.is-passing .daily-draft-card {
-  pointer-events: none !important;
-}
-/* =========================================
-   ONLINE DRAFT FINAL: SAME INPUT + SAME ANIMATION ALL ROUNDS
-   - Lượt 1/2/3/4/5 đều chọn bằng pointerdown ở app.ts.
-   - Không tắt animation chia bài.
-   - Không tắt animation trả/chuyền bài vào deck.
-   - Chỉ khóa input khi đang is-passing.
-   - Selected luôn top layer.
-   ========================================= */
-.player-hand.player-hand--draft .draft-deal-slot,
-.player-hand.player-hand--draft .daily-draft-card,
-.player-hand.player-hand--draft .draft-deal-slot > .hand-card,
-.player-hand.player-hand--draft .daily-draft-card > .hand-card {
-  cursor: pointer !important;
-  pointer-events: auto !important;
-}
-/* Trong lúc dealing vẫn click được; không đụng animation/opacity/transform. */
-.player-hand.player-hand--draft.player-hand--dealing .draft-deal-slot,
-.player-hand.player-hand--draft.is-dealing .draft-deal-slot,
-.player-hand.player-hand--draft.player-hand--dealing .daily-draft-card,
-.player-hand.player-hand--draft.is-dealing .daily-draft-card {
-  pointer-events: auto !important;
-}
-/* Đang trả/chuyền bài vào deck thì khóa input để animation nguyên vẹn. */
-.player-hand.player-hand--draft .player-hand__cards.is-passing,
-.player-hand.player-hand--draft .player-hand__cards.is-passing * {
-  pointer-events: none !important;
-}
-/* Selected top layer mọi lượt. */
-.player-hand.player-hand--draft .daily-draft-card--selected,
-.player-hand.player-hand--draft .draft-deal-slot.daily-draft-card--selected {
-  z-index: 9999 !important;
-  position: relative !important;
-}
-.player-hand.player-hand--draft .daily-draft-card--selected > .hand-card,
-.player-hand.player-hand--draft .daily-draft-card--selected > .hand-card--draft-selected {
-  z-index: 9999 !important;
-  position: relative !important;
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.96), 0 0 0 8px rgba(139, 92, 246, 0.82), 0 18px 34px rgba(75, 47, 25, 0.28) !important;
-}
-/* Chỉ nâng vị trí khi không đang deal/pass để không phá animation. */
-.player-hand.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .player-hand__cards:not(.is-passing) .daily-draft-card--selected {
-  transform: translateY(-28px) scale(1.06) rotate(0deg) !important;
-  filter: drop-shadow(0 18px 22px rgba(75, 47, 25, 0.28)) !important;
-}
-/* =========================================
-   DRAFT SELECTED TOP LAYER - FINAL
-   Chỉ sửa layer trong drafting phase.
-   Không đổi animation chia bài/trả bài.
-   ========================================= */
-.player-hand.player-hand--draft .player-hand__cards {
-  isolation: isolate !important;
-}
-.player-hand.player-hand--draft .player-hand__cards .daily-draft-card.daily-draft-card--selected,
-.player-hand.player-hand--draft .player-hand__cards .draft-deal-slot.daily-draft-card--selected,
-.player-hand.player-hand--draft .player-hand__cards .daily-draft-card.daily-draft-card--selected.daily-draft-card--1,
-.player-hand.player-hand--draft .player-hand__cards .daily-draft-card.daily-draft-card--selected.daily-draft-card--2,
-.player-hand.player-hand--draft .player-hand__cards .daily-draft-card.daily-draft-card--selected.daily-draft-card--3,
-.player-hand.player-hand--draft .player-hand__cards .daily-draft-card.daily-draft-card--selected.daily-draft-card--4,
-.player-hand.player-hand--draft .player-hand__cards .daily-draft-card.daily-draft-card--selected.daily-draft-card--5 {
-  z-index: 99999 !important;
-  position: relative !important;
-  isolation: isolate !important;
-}
-.player-hand.player-hand--draft .player-hand__cards .daily-draft-card:not(.daily-draft-card--selected),
-.player-hand.player-hand--draft .player-hand__cards .draft-deal-slot:not(.daily-draft-card--selected) {
-  z-index: auto;
-}
-.player-hand.player-hand--draft .player-hand__cards .daily-draft-card.daily-draft-card--selected > .hand-card,
-.player-hand.player-hand--draft .player-hand__cards .daily-draft-card.daily-draft-card--selected > .hand-card--draft-selected {
-  z-index: 99999 !important;
-  position: relative !important;
-}
-/* Nếu selected đang hover/dealing, vẫn không cho lá khác vượt qua. */
-.player-hand.player-hand--draft .player-hand__cards:hover .daily-draft-card.daily-draft-card--selected {
-  z-index: 99999 !important;
+.player-hand--draft .player-hand__cards.is-passing {
+  pointer-events: none;
 }
 /* =========================================
    ONLINE FINAL RANKING PANEL
@@ -8401,4 +6281,2660 @@ body {
   overflow: hidden !important;
   text-overflow: clip !important;
   font-size: 9px !important;
+}
+/* =========================================
+   DEBT / EXHAUST TOKENS
+   ========================================= */
+.board-mini--token {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 3px;
+  border-radius: 14px;
+  border: 2px solid rgba(120, 84, 48, 0.36);
+  color: #4e3a2b;
+  text-align: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+.board-mini--debt {
+  background: radial-gradient(circle at 50% 20%, rgba(251, 191, 36, 0.32), transparent 45%), linear-gradient(180deg, #fff7dd, #f7df9b);
+  border-color: rgba(245, 158, 11, 0.7);
+}
+.board-mini--lock {
+  background: repeating-linear-gradient(135deg, rgba(85, 107, 128, 0.16) 0 10px, rgba(255, 255, 255, 0.18) 10px 20px), linear-gradient(180deg, #dbe4ea, #c8d4dd);
+  border-color: rgba(90, 105, 122, 0.62);
+}
+.board-mini-token__icon {
+  font-size: 24px;
+  line-height: 1;
+  filter: drop-shadow(0 3px 5px rgba(70, 45, 20, 0.18));
+}
+.board-mini--token strong {
+  font-size: 13px;
+  font-weight: 1000;
+  letter-spacing: 0.02em;
+}
+.board-mini--token span {
+  font-size: 11px;
+  font-weight: 900;
+}
+.board-mini--token small {
+  font-size: 9px;
+  font-weight: 800;
+  opacity: 0.72;
+}
+/* =========================================
+   DEBT TOKEN COMPACT + BORROWABLE CARD FIX
+   ========================================= */
+.hand-card__resource-warning {
+  display: none !important;
+}
+.hand-card--unaffordable {
+  opacity: 1 !important;
+  filter: none !important;
+  cursor: grab !important;
+}
+.hand-card--unaffordable::before {
+  display: none !important;
+}
+.board-mini--debt {
+  overflow: hidden;
+  padding: 6px 8px;
+  gap: 2px;
+}
+.board-mini--debt .board-mini-token__icon {
+  font-size: 18px;
+}
+.board-mini--debt strong {
+  font-size: 12px;
+  line-height: 1.05;
+}
+.board-mini--debt span {
+  font-size: 10px;
+  line-height: 1.05;
+}
+.board-mini--debt small {
+  max-width: 100%;
+  font-size: 8px;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* =========================================
+   SIMPLE DEBT TOKEN LABEL
+   ========================================= */
+.board-mini--debt {
+  grid-template-rows: auto auto;
+  align-content: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 8px;
+}
+.board-mini--debt .board-mini-token__icon {
+  font-size: 18px;
+  line-height: 1;
+}
+.board-mini--debt strong {
+  max-width: 100%;
+  font-size: 13px;
+  line-height: 1.05;
+  font-weight: 1000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.board-mini--debt span,
+.board-mini--debt small {
+  display: none !important;
+}
+/* =========================================
+   BOARD EVENT OVERLAY READABILITY FIX
+   ========================================= */
+/*
+  Event trên board mini không được đè lên tên/thành phố nữa.
+  Chỉ giữ 1 icon nhỏ ở giữa và đưa nhãn event xuống đáy card.
+*/
+.board-mini--event-promo::before,
+.board-mini--event-traffic::before,
+.board-mini--event-storm::before,
+.board-mini--event-distance::before {
+  background: rgba(22, 16, 10, 0.38) !important;
+}
+.board-mini__event-pill {
+  top: auto !important;
+  left: 50% !important;
+  bottom: 6px !important;
+  z-index: 40 !important;
+  max-width: calc(100% - 18px) !important;
+  min-width: 0 !important;
+  padding: 4px 8px !important;
+  border-radius: 999px !important;
+  font-size: 8px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  transform: translateX(-50%) !important;
+  box-shadow: 0 6px 10px rgba(45, 26, 12, 0.24) !important;
+}
+.board-mini__event-icon {
+  top: 54% !important;
+  left: 50% !important;
+  z-index: 39 !important;
+  width: 30px !important;
+  height: 30px !important;
+  font-size: 21px !important;
+  opacity: 0.92 !important;
+  transform: translate(-50%, -50%) !important;
+}
+.board-mini__event-note {
+  display: none !important;
+}
+.board-mini--event-promo .board-mini__event-pill {
+  background: linear-gradient(135deg, #f59e0b, #f97316) !important;
+}
+.board-mini--event-traffic .board-mini__event-pill {
+  background: linear-gradient(135deg, #f59e0b, #b45309) !important;
+}
+.board-mini--event-storm .board-mini__event-pill {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+}
+.board-mini--event-distance .board-mini__event-pill {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+}
+/* =========================================
+   EVENT BADGE POSITION FIX
+   ========================================= */
+/*
+  Badge event không nằm đè lên tag/icon nữa.
+  Đẩy lên góc trên bên phải, nhỏ gọn dưới điểm VP.
+*/
+.board-mini__event-pill {
+  top: 24px !important;
+  right: 8px !important;
+  left: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  z-index: 42 !important;
+  max-width: 92px !important;
+  min-width: 0 !important;
+  padding: 4px 7px !important;
+  font-size: 8px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+.board-mini__event-icon {
+  top: 58% !important;
+  left: 50% !important;
+  z-index: 39 !important;
+  width: 28px !important;
+  height: 28px !important;
+  font-size: 20px !important;
+  pointer-events: none !important;
+}
+.board-mini--event-traffic .board-mini__event-pill {
+  max-width: 100px !important;
+}
+/* =========================================
+   EVENT BADGE LOWER + SIMPLE LOCK TOKEN
+   ========================================= */
+/*
+  Badge event thấp hơn một chút để không che ô điểm VP ở góc phải.
+*/
+.board-mini__event-pill {
+  top: 34px !important;
+  right: 8px !important;
+  left: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  max-width: 96px !important;
+}
+/*
+  Ô kiệt sức tối giản giống ô nợ.
+*/
+.board-mini--lock {
+  grid-template-rows: auto auto;
+  align-content: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 8px;
+  overflow: hidden;
+}
+.board-mini--lock .board-mini-token__icon {
+  font-size: 18px;
+  line-height: 1;
+}
+.board-mini--lock strong {
+  max-width: 100%;
+  font-size: 13px;
+  line-height: 1.05;
+  font-weight: 1000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.board-mini--lock span,
+.board-mini--lock small {
+  display: none !important;
+}
+/* =========================================
+   STABLE FULLSCREEN LAYOUT RESET
+   ========================================= */
+/*
+  Không scale toàn bộ DOM nữa.
+  Các bản scale trước làm:
+  - lá bài nhỏ bất thường
+  - deck lệch/nhỏ
+  - thanh top lệch
+  - flowchart đè layout
+
+  Bản này quay về layout gốc ổn định, chỉ ép game chiếm đúng viewport.
+*/
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden !important;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.4), transparent 58%), linear-gradient(180deg, #f5efe6, #e8dccb) !important;
+}
+.game-shell {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  transform: none !important;
+  transform-origin: initial !important;
+  zoom: 1 !important;
+  display: grid !important;
+  grid-template-columns: var(--side-width) var(--center-width) var(--side-width) !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+}
+.players-column {
+  width: auto !important;
+  height: 100vh !important;
+}
+.arena {
+  width: var(--center-width) !important;
+  height: 100vh !important;
+  min-width: 0 !important;
+}
+.arena::before {
+  position: fixed !important;
+  inset: 8px var(--side-width) !important;
+}
+.arena__main {
+  height: calc(100vh - (var(--arena-padding-y) * 2) - var(--top-height)) !important;
+}
+/*
+  Chặn các media scale cũ còn sót.
+*/
+@media (max-aspect-ratio: 16 / 9) {
+  .game-shell {
+    transform: none !important;
+  }
+}
+@media (min-aspect-ratio: 16 / 9) {
+  .game-shell {
+    transform: none !important;
+  }
+}
+/* =========================================
+   DESKTOP UNIFORM SCALE V4 - NO BLACK BAR
+   ========================================= */
+/*
+  Giữ layout gốc 1600x900, scale cả game như một khối.
+  Khác bản lỗi trước:
+  - Không dùng transform scale nữa.
+  - Dùng zoom của Chromium/Edge để layout box cũng scale theo.
+  - Nền letterbox dùng màu giấy của game, không còn black bar.
+  - F11 không làm flowchart/deck/top bar đè lệch.
+*/
+:root {
+  --ui-scale: 1;
+  --center-width: 1060px;
+  --side-width: 270px;
+  --arena-padding-x: 8px;
+  --arena-padding-y: 8px;
+  --time-col: 68px;
+  --gap: 8px;
+  --top-height: 62px;
+  --day-height: 34px;
+  --main-gap: 6px;
+  --hand-card-w: 158px;
+  --hand-card-h: 234px;
+  --hand-height: 270px;
+  --hand-overlap: 70px;
+  --cell-h: 94px;
+  --cell-w: calc((var(--center-width) - var(--time-col) - (var(--gap) * 5) - 32px) / 5);
+  --card-w: calc(var(--cell-w) - 6px);
+  --card-h: calc(var(--cell-h) - 6px);
+}
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden !important;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.75), transparent 58%), linear-gradient(180deg, #f5efe6, #e8dccb) !important;
+}
+#app {
+  position: fixed !important;
+  inset: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+}
+/*
+  Quan trọng:
+  Game-shell là layout gốc 1600x900.
+  zoom scale cả layout lẫn hitbox, nên kéo thả không bị lệch như transform.
+*/
+.game-shell {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  width: 1600px !important;
+  height: 900px !important;
+  min-width: 1600px !important;
+  min-height: 900px !important;
+  display: grid !important;
+  grid-template-columns: var(--side-width) var(--center-width) var(--side-width) !important;
+  transform: none !important;
+  transform-origin: initial !important;
+  zoom: var(--ui-scale) !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+}
+.players-column {
+  width: var(--side-width) !important;
+  height: 900px !important;
+}
+.arena {
+  width: var(--center-width) !important;
+  height: 900px !important;
+  min-width: 0 !important;
+}
+.arena::before {
+  position: absolute !important;
+  inset: 8px !important;
+}
+.arena__main {
+  height: calc(900px - (var(--arena-padding-y) * 2) - var(--top-height)) !important;
+}
+.auth-screen,
+.online-entry-screen {
+  width: 1600px !important;
+  height: 900px !important;
+  min-height: 900px !important;
+}
+/* 
+  Scale theo các viewport desktop phổ biến.
+  Width và height đều có rule; rule height nằm sau để màn thấp không bị tràn.
+*/
+/* Width scale */
+@media (max-width: 1599px) {
+  :root {
+    --ui-scale: 0.98;
+  }
+}
+@media (max-width: 1560px) {
+  :root {
+    --ui-scale: 0.94;
+  }
+}
+@media (max-width: 1460px) {
+  :root {
+    --ui-scale: 0.88;
+  }
+}
+@media (max-width: 1366px) {
+  :root {
+    --ui-scale: 0.84;
+  }
+}
+@media (max-width: 1280px) {
+  :root {
+    --ui-scale: 0.78;
+  }
+}
+/* Height scale */
+@media (max-height: 899px) {
+  :root {
+    --ui-scale: 0.98;
+  }
+}
+@media (max-height: 860px) {
+  :root {
+    --ui-scale: 0.94;
+  }
+}
+@media (max-height: 800px) {
+  :root {
+    --ui-scale: 0.88;
+  }
+}
+@media (max-height: 760px) {
+  :root {
+    --ui-scale: 0.84;
+  }
+}
+@media (max-height: 700px) {
+  :root {
+    --ui-scale: 0.76;
+  }
+}
+/* Large desktop / F11 */
+@media (min-width: 1700px) and (min-height: 960px) {
+  :root {
+    --ui-scale: 1.08;
+  }
+}
+@media (min-width: 1850px) and (min-height: 1030px) {
+  :root {
+    --ui-scale: 1.16;
+  }
+}
+@media (min-width: 1920px) and (min-height: 1080px) {
+  :root {
+    --ui-scale: 1.2;
+  }
+}
+/*
+  Nếu màn cực rộng nhưng thấp, không phóng quá mạnh theo width.
+*/
+@media (min-width: 1700px) and (max-height: 940px) {
+  :root {
+    --ui-scale: 1;
+  }
+}
+/*
+  Mobile portrait không ép scale game board.
+*/
+@media (orientation: portrait), (max-width: 1024px) {
+  #app::before {
+    content: "Vui lòng dùng màn hình ngang / laptop để chơi game.";
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: grid;
+    place-items: center;
+    padding: 28px;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.08), transparent 58%), #111;
+    color: #fff7e8;
+    font-size: 20px;
+    font-weight: 900;
+    text-align: center;
+    line-height: 1.35;
+  }
+  .game-shell {
+    visibility: hidden;
+  }
+}
+/* =========================================
+   FIX SCALE OVERLAP: FLOWCHART + DECK
+   ========================================= */
+/*
+  Giữ kiểu scale toàn game, nhưng ép flowchart dùng kích thước theo canvas 1600x900,
+  không dùng vh nữa. Đây là lỗi làm ô cuối flowchart đè lên panel phải.
+*/
+.simulation-flowchart {
+  width: calc(var(--center-width) - 24px) !important;
+  height: 258px !important;
+  max-height: 258px !important;
+  min-height: 258px !important;
+  margin: 4px 12px 8px !important;
+  padding: 9px 10px 10px !important;
+  overflow: hidden !important;
+}
+.simulation-flowchart__header {
+  margin-bottom: 8px !important;
+}
+.simulation-flowchart__header h3 {
+  font-size: 16px !important;
+  line-height: 1 !important;
+}
+.simulation-flowchart__progress {
+  min-width: 74px !important;
+  padding: 7px 10px !important;
+}
+.simulation-flowchart__main {
+  width: 100% !important;
+  min-width: 0 !important;
+  display: grid !important;
+  grid-template-columns: 108px minmax(0, 1fr) 178px !important;
+  gap: 10px !important;
+  align-items: stretch !important;
+  overflow: hidden !important;
+}
+.simulation-flowchart__days {
+  min-width: 0 !important;
+  gap: 6px !important;
+}
+.flow-day {
+  min-height: 38px !important;
+  padding: 6px 7px !important;
+}
+.flow-day strong {
+  font-size: 12px !important;
+}
+.simulation-flowchart__path {
+  width: 100% !important;
+  height: 174px !important;
+  min-height: 174px !important;
+  max-height: 174px !important;
+  padding: 10px 10px 8px !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  align-items: center !important;
+  overflow: hidden !important;
+}
+.flow-node {
+  min-width: 0 !important;
+  overflow: visible !important;
+  gap: 5px !important;
+}
+.flow-node:not(:last-child)::after {
+  right: -11px !important;
+  font-size: 14px !important;
+}
+.flow-node__time {
+  padding: 4px 9px !important;
+  font-size: 7px !important;
+}
+.flow-node__card {
+  min-width: 0 !important;
+  min-height: 108px !important;
+  max-height: 126px !important;
+  padding: 7px !important;
+  overflow: hidden !important;
+}
+.flow-node__card h4 {
+  font-size: 9px !important;
+  line-height: 1.05 !important;
+}
+.flow-node__card p {
+  font-size: 6.4px !important;
+  line-height: 1.15 !important;
+  max-height: 24px !important;
+  overflow: hidden !important;
+}
+.flow-node__meta {
+  gap: 4px !important;
+}
+.flow-node__meta span {
+  font-size: 6px !important;
+  padding: 3px 5px !important;
+}
+.flow-node__combo,
+.flow-node__event-badge {
+  max-width: 92px !important;
+  padding: 4px 7px !important;
+  font-size: 7px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+.simulation-flowchart__side {
+  min-width: 0 !important;
+  width: 178px !important;
+  overflow: hidden !important;
+}
+.flow-current,
+.flow-total,
+.flow-final {
+  padding: 9px 10px !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+.flow-current strong,
+.flow-total strong,
+.flow-final strong {
+  font-size: 15px !important;
+  line-height: 1 !important;
+}
+/*
+  Right deck panel giữ đúng trong sidebar 270px, không bị trôi/nhỏ lạ khi zoom.
+*/
+.players-column--right {
+  width: var(--side-width) !important;
+  overflow: hidden !important;
+}
+.deck-pile-panel {
+  width: 100% !important;
+  height: 50% !important;
+  padding: 18px 16px !important;
+  overflow: hidden !important;
+}
+.deck-pile-panel__visual {
+  min-height: 160px !important;
+  display: grid !important;
+  place-items: center !important;
+}
+.deck-card-stack {
+  width: 122px !important;
+  height: 170px !important;
+  transform: none !important;
+}
+/* =========================================
+   DECK PANEL ALIGNMENT FIX
+   ========================================= */
+/*
+  Sửa panel deck bên phải:
+  - Số 0 không bị cắt/lệch sang phải.
+  - Ẩn dòng hướng dẫn dài bên dưới.
+  - Đưa bộ bài vào giữa panel hơn.
+*/
+.deck-pile-panel {
+  padding: 18px 18px 14px !important;
+  align-items: stretch !important;
+  overflow: hidden !important;
+}
+.deck-pile-panel__top {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 48px !important;
+  align-items: start !important;
+  gap: 10px !important;
+}
+.deck-pile-panel__top > div {
+  min-width: 0 !important;
+}
+.deck-pile-panel__top h3 {
+  max-width: 100% !important;
+  font-size: 16px !important;
+  line-height: 1.05 !important;
+}
+.deck-pile-panel__top strong {
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  justify-self: end !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  text-align: center !important;
+  line-height: 1 !important;
+}
+.deck-pile-panel__visual {
+  flex: 1 1 auto !important;
+  min-height: 190px !important;
+  display: grid !important;
+  place-items: center !important;
+  justify-items: center !important;
+  align-items: center !important;
+  overflow: visible !important;
+}
+.deck-card-stack {
+  margin: 0 auto !important;
+  justify-self: center !important;
+  align-self: center !important;
+}
+.deck-pile-panel__info {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+.deck-pile-panel__info div {
+  min-width: 0 !important;
+  padding: 9px 10px !important;
+  overflow: hidden !important;
+}
+.deck-pile-panel__info strong {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-align: left !important;
+  line-height: 1 !important;
+}
+/* Ẩn mô tả dài dưới deck */
+.deck-pile-panel > p {
+  display: none !important;
+}
+/* =========================================
+   DECK PANEL CLEAN CENTER FIX
+   ========================================= */
+/*
+  Deck panel tối giản:
+  - Ẩn dòng tiêu đề trên cùng: DECK / Bộ bài hành trình.
+  - Ẩn số 0 bị cắt ở góc phải.
+  - Đưa bộ bài vào giữa vùng panel.
+*/
+.deck-pile-panel {
+  position: relative !important;
+  padding: 18px 18px 16px !important;
+  display: grid !important;
+  grid-template-rows: 1fr auto !important;
+  gap: 16px !important;
+  align-items: center !important;
+  justify-items: center !important;
+  overflow: hidden !important;
+}
+.deck-pile-panel__top {
+  display: none !important;
+}
+.deck-pile-panel__visual {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  justify-items: center !important;
+  align-items: center !important;
+  overflow: visible !important;
+}
+.deck-card-stack {
+  margin: 0 auto !important;
+  justify-self: center !important;
+  align-self: center !important;
+  transform: translateX(0) !important;
+}
+.deck-pile-panel__info {
+  width: 100% !important;
+  align-self: end !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 8px !important;
+}
+.deck-pile-panel__info div {
+  min-width: 0 !important;
+  padding: 9px 10px !important;
+  overflow: hidden !important;
+}
+.deck-pile-panel__info strong {
+  text-align: left !important;
+}
+/* Ẩn mọi mô tả phụ còn sót trong deck panel */
+.deck-pile-panel > p {
+  display: none !important;
+}
+/* =========================================
+   DECK PANEL BALANCED TITLE + CENTER FIX
+   ========================================= */
+/*
+  Bố cục deck mới:
+  - Có lại chữ DECK nhỏ ở trên.
+  - Bỏ số 0 và title dài.
+  - Bộ bài nằm cân giữa vùng còn lại.
+  - Bộ bài gần hơn với 2 ô thống kê bên dưới, không bị trống quá nhiều.
+*/
+.deck-pile-panel {
+  position: relative !important;
+  padding: 18px 18px 16px !important;
+  display: grid !important;
+  grid-template-rows: 34px 1fr auto !important;
+  gap: 10px !important;
+  align-items: stretch !important;
+  justify-items: stretch !important;
+  overflow: hidden !important;
+}
+.deck-pile-panel__top {
+  display: block !important;
+  min-height: 34px !important;
+  height: 34px !important;
+}
+.deck-pile-panel__top > div {
+  display: block !important;
+}
+.deck-pile-panel__top span {
+  display: block !important;
+  color: #8b5cf6 !important;
+  font-size: 9px !important;
+  line-height: 1 !important;
+  font-weight: 1000 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+}
+.deck-pile-panel__top h3,
+.deck-pile-panel__top strong {
+  display: none !important;
+}
+.deck-pile-panel__visual {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  display: grid !important;
+  place-items: end center !important;
+  justify-items: center !important;
+  align-items: end !important;
+  padding-bottom: 18px !important;
+  overflow: visible !important;
+}
+.deck-card-stack {
+  margin: 0 auto !important;
+  justify-self: center !important;
+  align-self: end !important;
+  transform: translateX(0) !important;
+}
+.deck-pile-panel__info {
+  width: 100% !important;
+  align-self: end !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 8px !important;
+}
+.deck-pile-panel__info div {
+  min-width: 0 !important;
+  padding: 9px 10px !important;
+  overflow: hidden !important;
+}
+.deck-pile-panel__info strong {
+  text-align: left !important;
+}
+.deck-pile-panel > p {
+  display: none !important;
+}
+/* =========================================
+   BOARD MINI CARD REDESIGN - IMAGE 75 / INFO 25
+   ========================================= */
+/*
+  Thiết kế mini card mới theo reference:
+  - 75% phía trên là ảnh.
+  - 25% phía dưới là thanh tên + VP.
+  - Tag nhỏ nằm góc phải phía trên ảnh.
+  - Card gọn, dễ đọc khi nằm trên board.
+  - Token nợ / khóa giữ thiết kế riêng, không bị ảnh hưởng.
+*/
+.board-mini:not(.board-mini--token) {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-rows: 75% 25% !important;
+  gap: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 13px !important;
+  border: 2px solid rgba(125, 90, 52, 0.62) !important;
+  background: #f6ead6 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.62), 0 7px 13px rgba(74, 47, 24, 0.12) !important;
+}
+.board-mini:not(.board-mini--token)::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 3 !important;
+  pointer-events: none !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 42%), radial-gradient(circle at 50% 8%, rgba(255, 255, 255, 0.18), transparent 38%) !important;
+}
+/* Ảnh chiếm 75% phía trên */
+.board-mini:not(.board-mini--token) .board-mini__image {
+  grid-row: 1 !important;
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  border-radius: 10px 10px 0 0 !important;
+  overflow: hidden !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+/* Nếu ảnh đang nằm bằng pseudo/inline background ở wrapper cũ thì ép full vùng trên */
+.board-mini:not(.board-mini--token) .board-mini__art,
+.board-mini:not(.board-mini--token) .board-mini__photo,
+.board-mini:not(.board-mini--token) .board-mini__cover {
+  grid-row: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 10px 10px 0 0 !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+/* Vùng thông tin 25% phía dưới */
+.board-mini:not(.board-mini--token) .board-mini__info {
+  grid-row: 2 !important;
+  position: relative !important;
+  z-index: 5 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  grid-template-rows: 1fr !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 0 8px !important;
+  background: linear-gradient(180deg, rgba(31, 24, 18, 0.96), rgba(12, 10, 8, 0.98)) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+/* Tên nằm dưới trái */
+.board-mini:not(.board-mini--token) .board-mini__name {
+  grid-column: 1 !important;
+  color: #fff8eb !important;
+  font-size: 11px !important;
+  line-height: 1.05 !important;
+  font-weight: 1000 !important;
+  letter-spacing: -0.02em !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  text-transform: none !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55) !important;
+}
+/* VP nằm dưới phải, dạng pill sáng */
+.board-mini:not(.board-mini--token) .board-mini__vp {
+  grid-column: 2 !important;
+  position: static !important;
+  inset: auto !important;
+  min-width: 34px !important;
+  height: 21px !important;
+  padding: 0 8px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  color: #3b2a1c !important;
+  background: rgba(255, 250, 236, 0.96) !important;
+  border: 2px solid rgba(126, 92, 56, 0.44) !important;
+  font-size: 10px !important;
+  line-height: 1 !important;
+  font-weight: 1000 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 2px 5px rgba(0, 0, 0, 0.18) !important;
+}
+/* Tag nhỏ góc phải trên ảnh */
+.board-mini:not(.board-mini--token) .board-mini__tag {
+  position: absolute !important;
+  z-index: 7 !important;
+  top: 5px !important;
+  right: 6px !important;
+  max-width: 66px !important;
+  padding: 3px 7px !important;
+  border-radius: 999px !important;
+  color: #fff !important;
+  background: rgba(249, 115, 22, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  font-size: 6.8px !important;
+  line-height: 1 !important;
+  font-weight: 1000 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  box-shadow: 0 4px 8px rgba(60, 36, 16, 0.18) !important;
+}
+/* Ẩn các chi tiết phụ ở mini card để không rối */
+.board-mini:not(.board-mini--token) .board-mini__pin,
+.board-mini:not(.board-mini--token) .board-mini__city,
+.board-mini:not(.board-mini--token) .board-mini__cost,
+.board-mini:not(.board-mini--token) .board-mini__icons,
+.board-mini:not(.board-mini--token) .board-mini__bonus,
+.board-mini:not(.board-mini--token) .board-mini__description {
+  display: none !important;
+}
+/* Event overlay tương thích với thiết kế mới */
+.board-mini:not(.board-mini--token).board-mini--event-promo::before,
+.board-mini:not(.board-mini--token).board-mini--event-traffic::before,
+.board-mini:not(.board-mini--token).board-mini--event-storm::before,
+.board-mini:not(.board-mini--token).board-mini--event-distance::before {
+  background: rgba(18, 13, 9, 0.42) !important;
+}
+.board-mini:not(.board-mini--token) .board-mini__event-pill {
+  top: 6px !important;
+  left: 8px !important;
+  right: auto !important;
+  bottom: auto !important;
+  max-width: calc(100% - 82px) !important;
+  padding: 4px 7px !important;
+  font-size: 7px !important;
+  transform: none !important;
+  z-index: 9 !important;
+}
+.board-mini:not(.board-mini--token) .board-mini__event-icon {
+  top: 44% !important;
+  left: 50% !important;
+  width: 28px !important;
+  height: 28px !important;
+  font-size: 20px !important;
+  z-index: 8 !important;
+}
+/* Responsive mini card trong màn thấp */
+@media (max-height: 820px), (max-width: 1460px) {
+  .board-mini:not(.board-mini--token) .board-mini__name {
+    font-size: 9.5px !important;
+  }
+  .board-mini:not(.board-mini--token) .board-mini__vp {
+    min-width: 30px !important;
+    height: 19px !important;
+    font-size: 9px !important;
+    padding: 0 6px !important;
+  }
+  .board-mini:not(.board-mini--token) .board-mini__tag {
+    top: 4px !important;
+    right: 5px !important;
+    max-width: 58px !important;
+    font-size: 6px !important;
+    padding: 3px 6px !important;
+  }
+}
+/* =========================================
+   BOARD MINI CARD REDESIGN FIX - REAL IMAGE + BAR FULL WIDTH
+   ========================================= */
+/*
+  Fix bản redesign:
+  - Thêm/hiện ảnh thật ở 75% phía trên.
+  - Tag nằm góc trái trên cùng.
+  - Thanh đen phía dưới phủ hết chiều ngang card.
+  - VP giữ ở góc phải trong thanh dưới.
+*/
+.board-mini:not(.board-mini--token) {
+  position: relative !important;
+  display: grid !important;
+  grid-template-rows: 75% 25% !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+.board-mini:not(.board-mini--token) .board-mini__image {
+  grid-row: 1 !important;
+  grid-column: 1 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  border-radius: 10px 10px 0 0 !important;
+  overflow: hidden !important;
+}
+.board-mini:not(.board-mini--token) .board-mini__info {
+  grid-row: 2 !important;
+  grid-column: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 0 8px !important;
+  box-sizing: border-box !important;
+  background: linear-gradient(180deg, rgba(24, 18, 13, 0.97), rgba(7, 6, 5, 0.98)) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.16) !important;
+}
+.board-mini:not(.board-mini--token) .board-mini__name {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  color: #fff8eb !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+  font-weight: 1000 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  text-transform: none !important;
+}
+.board-mini:not(.board-mini--token) .board-mini__vp {
+  position: static !important;
+  inset: auto !important;
+  min-width: 34px !important;
+  height: 21px !important;
+  padding: 0 8px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  color: #3b2a1c !important;
+  background: rgba(255, 250, 236, 0.98) !important;
+  border: 2px solid rgba(126, 92, 56, 0.44) !important;
+  font-size: 10px !important;
+  line-height: 1 !important;
+  font-weight: 1000 !important;
+}
+.board-mini:not(.board-mini--token) .board-mini__tag {
+  position: absolute !important;
+  top: 5px !important;
+  left: 6px !important;
+  right: auto !important;
+  z-index: 10 !important;
+  max-width: 68px !important;
+  padding: 3px 7px !important;
+  border-radius: 999px !important;
+  color: #fff !important;
+  background: rgba(249, 115, 22, 0.95) !important;
+  font-size: 6.8px !important;
+  line-height: 1 !important;
+  font-weight: 1000 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+/* Xóa city khỏi mini card mới */
+.board-mini:not(.board-mini--token) .board-mini__city,
+.board-mini:not(.board-mini--token) [class*="board-mini__city"] {
+  display: none !important;
+}
+/* Event pill chuyển qua phải để không đè tag trái */
+.board-mini:not(.board-mini--token) .board-mini__event-pill {
+  top: 5px !important;
+  left: auto !important;
+  right: 6px !important;
+  max-width: calc(100% - 84px) !important;
+  z-index: 11 !important;
+}
+/* =========================================
+   BOARD MINI CARD READABILITY FIX
+   ========================================= */
+/*
+  Fix mini card:
+  - Online board dùng ảnh thật từ server nếu có.
+  - Font tên nhỏ hơn để không bị che.
+  - Thanh dưới gọn hơn.
+  - Tag nhỏ hơn.
+*/
+.board-mini:not(.board-mini--token) {
+  grid-template-rows: 76% 24% !important;
+}
+.board-mini:not(.board-mini--token) .board-mini__image {
+  display: block !important;
+  background-color: #e8d8bf !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+.board-mini:not(.board-mini--token) .board-mini__info {
+  padding: 0 6px !important;
+  gap: 5px !important;
+}
+.board-mini:not(.board-mini--token) .board-mini__name {
+  font-size: 9.2px !important;
+  line-height: 1 !important;
+  letter-spacing: -0.04em !important;
+}
+.board-mini:not(.board-mini--token) .board-mini__vp {
+  min-width: 29px !important;
+  height: 18px !important;
+  padding: 0 6px !important;
+  font-size: 8.4px !important;
+  border-width: 1px !important;
+}
+.board-mini:not(.board-mini--token) .board-mini__tag {
+  top: 4px !important;
+  left: 5px !important;
+  max-width: 54px !important;
+  padding: 2px 6px !important;
+  font-size: 5.8px !important;
+  line-height: 1 !important;
+}
+@media (max-height: 820px), (max-width: 1460px) {
+  .board-mini:not(.board-mini--token) .board-mini__name {
+    font-size: 8.2px !important;
+  }
+  .board-mini:not(.board-mini--token) .board-mini__vp {
+    min-width: 27px !important;
+    height: 17px !important;
+    font-size: 8px !important;
+    padding: 0 5px !important;
+  }
+  .board-mini:not(.board-mini--token) .board-mini__tag {
+    max-width: 48px !important;
+    font-size: 5.4px !important;
+    padding: 2px 5px !important;
+  }
+}
+/* =========================================
+   CLEAN DRAFT 7-CARD FAN
+   Luật: phát 7 lá, chọn 5 lá, 2 lá dư trả deck.
+   Đây là block draft duy nhất; không dùng override chồng nhau.
+   ========================================= */
+/* Draft cards dùng vùng hand hiện có */
+.player-hand--draft .player-hand__cards {
+  position: relative;
+  width: 560px;
+  max-width: 100%;
+  height: 250px;
+  min-height: 250px;
+  margin: 0 auto;
+  display: block;
+  overflow: visible;
+  transform: translateY(-28px);
+  isolation: isolate;
+}
+.player-hand--draft .daily-draft-card {
+  position: absolute;
+  top: 0;
+  width: var(--hand-card-w);
+  height: var(--hand-card-h);
+  flex: none;
+  margin: 0;
+  cursor: pointer;
+  transform-origin: 50% 118%;
+  transition: transform 180ms cubic-bezier(0.2, 0.95, 0.22, 1.08), filter 140ms ease;
+  pointer-events: auto;
+}
+.player-hand--draft .daily-draft-card > .hand-card {
+  margin: 0 !important;
+  pointer-events: none !important;
+  transform: none !important;
+}
+/* Vị trí ngang tuyệt đối của 7 lá */
+.player-hand--draft .daily-draft-card--1 {
+  left: calc(50% - 180px);
+}
+.player-hand--draft .daily-draft-card--2 {
+  left: calc(50% - 120px);
+}
+.player-hand--draft .daily-draft-card--3 {
+  left: calc(50% - 60px);
+}
+.player-hand--draft .daily-draft-card--4 {
+  left: 50%;
+}
+.player-hand--draft .daily-draft-card--5 {
+  left: calc(50% + 60px);
+}
+.player-hand--draft .daily-draft-card--6 {
+  left: calc(50% + 120px);
+}
+.player-hand--draft .daily-draft-card--7 {
+  left: calc(50% + 180px);
+}
+.player-hand--draft .daily-draft-card--8 {
+  display: none !important;
+}
+/* Fan sau khi chia xong */
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--1 {
+  transform: translateX(-50%) translateY(-2px) rotate(-21deg);
+  z-index: 11;
+}
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--2 {
+  transform: translateX(-50%) translateY(-10px) rotate(-14deg);
+  z-index: 12;
+}
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--3 {
+  transform: translateX(-50%) translateY(-17px) rotate(-7deg);
+  z-index: 13;
+}
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--4 {
+  transform: translateX(-50%) translateY(-21px) rotate(0deg);
+  z-index: 14;
+}
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--5 {
+  transform: translateX(-50%) translateY(-17px) rotate(7deg);
+  z-index: 13;
+}
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--6 {
+  transform: translateX(-50%) translateY(-10px) rotate(14deg);
+  z-index: 12;
+}
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--7 {
+  transform: translateX(-50%) translateY(-2px) rotate(21deg);
+  z-index: 11;
+}
+/* Hover rõ và click được cho cả 7 lá */
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card:hover {
+  z-index: 9999;
+  filter: saturate(1.05) contrast(1.02) drop-shadow(0 14px 18px rgba(75, 47, 25, 0.18));
+}
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--1:hover {
+  transform: translateX(-50%) translateY(-36px) rotate(-13deg) scale(1.025);
+}
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--2:hover {
+  transform: translateX(-50%) translateY(-40px) rotate(-8deg) scale(1.025);
+}
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--3:hover {
+  transform: translateX(-50%) translateY(-44px) rotate(-4deg) scale(1.025);
+}
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--4:hover {
+  transform: translateX(-50%) translateY(-48px) rotate(0deg) scale(1.03);
+}
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--5:hover {
+  transform: translateX(-50%) translateY(-44px) rotate(4deg) scale(1.025);
+}
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--6:hover {
+  transform: translateX(-50%) translateY(-40px) rotate(8deg) scale(1.025);
+}
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--7:hover {
+  transform: translateX(-50%) translateY(-36px) rotate(13deg) scale(1.025);
+}
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--selected,
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--selected:hover {
+  z-index: 99999 !important;
+  filter: drop-shadow(0 18px 22px rgba(75, 47, 25, 0.28));
+  transform: translateX(-50%) translateY(-60px) rotate(0deg) scale(1.055) !important;
+}
+/* Animation chia bài: chạy trực tiếp trên wrapper */
+.player-hand--draft.player-hand--dealing .daily-draft-card,
+.player-hand--draft.is-dealing .daily-draft-card {
+  pointer-events: none;
+  animation-duration: 1.08s;
+  animation-timing-function: cubic-bezier(0.16, 0.9, 0.24, 1);
+  animation-fill-mode: both;
+  will-change: transform, opacity;
+}
+.player-hand--draft.player-hand--dealing .daily-draft-card > .hand-card,
+.player-hand--draft.is-dealing .daily-draft-card > .hand-card {
+  transform: none !important;
+  animation: none !important;
+  transition: none !important;
+}
+.player-hand--draft.player-hand--dealing .daily-draft-card--1,
+.player-hand--draft.is-dealing .daily-draft-card--1 {
+  animation-name: draftDeal7Clean1;
+  animation-delay: 0ms;
+  z-index: 101;
+}
+.player-hand--draft.player-hand--dealing .daily-draft-card--2,
+.player-hand--draft.is-dealing .daily-draft-card--2 {
+  animation-name: draftDeal7Clean2;
+  animation-delay: 85ms;
+  z-index: 102;
+}
+.player-hand--draft.player-hand--dealing .daily-draft-card--3,
+.player-hand--draft.is-dealing .daily-draft-card--3 {
+  animation-name: draftDeal7Clean3;
+  animation-delay: 170ms;
+  z-index: 103;
+}
+.player-hand--draft.player-hand--dealing .daily-draft-card--4,
+.player-hand--draft.is-dealing .daily-draft-card--4 {
+  animation-name: draftDeal7Clean4;
+  animation-delay: 255ms;
+  z-index: 104;
+}
+.player-hand--draft.player-hand--dealing .daily-draft-card--5,
+.player-hand--draft.is-dealing .daily-draft-card--5 {
+  animation-name: draftDeal7Clean5;
+  animation-delay: 340ms;
+  z-index: 103;
+}
+.player-hand--draft.player-hand--dealing .daily-draft-card--6,
+.player-hand--draft.is-dealing .daily-draft-card--6 {
+  animation-name: draftDeal7Clean6;
+  animation-delay: 425ms;
+  z-index: 102;
+}
+.player-hand--draft.player-hand--dealing .daily-draft-card--7,
+.player-hand--draft.is-dealing .daily-draft-card--7 {
+  animation-name: draftDeal7Clean7;
+  animation-delay: 510ms;
+  z-index: 101;
+}
+@keyframes draftDeal7Clean1 {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(610px, -126px, 0) rotate(25deg) scale(0.58);
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-2px) rotate(-21deg) scale(1);
+  }
+}
+@keyframes draftDeal7Clean2 {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(560px, -130px, 0) rotate(20deg) scale(0.58);
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-10px) rotate(-14deg) scale(1);
+  }
+}
+@keyframes draftDeal7Clean3 {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(510px, -134px, 0) rotate(15deg) scale(0.58);
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-17px) rotate(-7deg) scale(1);
+  }
+}
+@keyframes draftDeal7Clean4 {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(460px, -138px, 0) rotate(8deg) scale(0.58);
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-21px) rotate(0deg) scale(1);
+  }
+}
+@keyframes draftDeal7Clean5 {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(410px, -134px, 0) rotate(0deg) scale(0.58);
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-17px) rotate(7deg) scale(1);
+  }
+}
+@keyframes draftDeal7Clean6 {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(360px, -130px, 0) rotate(-8deg) scale(0.58);
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-10px) rotate(14deg) scale(1);
+  }
+}
+@keyframes draftDeal7Clean7 {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(310px, -126px, 0) rotate(-15deg) scale(0.58);
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-2px) rotate(21deg) scale(1);
+  }
+}
+/* Passing card về deck: giữ hiệu ứng nhẹ, không làm mất click sau đó */
+.player-hand--draft .player-hand__cards.is-passing .daily-draft-card:not(.daily-draft-card--selected) {
+  pointer-events: none;
+  animation: draftPassToDeckClean 0.9s cubic-bezier(0.17, 0.82, 0.24, 1) forwards;
+}
+.player-hand--draft .player-hand__cards.is-passing .daily-draft-card--selected {
+  pointer-events: none;
+  animation: draftChosenKeepClean 0.65s ease forwards;
+}
+@keyframes draftPassToDeckClean {
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-18px) rotate(6deg) scale(0.96);
+  }
+  70% {
+    opacity: 0.8;
+    transform: translateX(-50%) translate3d(460px, -82px, 0) rotate(18deg) scale(0.62);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(690px, -122px, 0) rotate(26deg) scale(0.38);
+  }
+}
+@keyframes draftChosenKeepClean {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-62px) rotate(0deg) scale(1.08);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-96px) rotate(-5deg) scale(0.78);
+  }
+}
+.player-hand--draft .player-hand__cards.is-passing {
+  pointer-events: none;
+}
+/* Draft 7 compact fan final touch */
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card,
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .draft-deal-slot {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+.player-hand--draft .daily-draft-card > .hand-card {
+  pointer-events: none !important;
+}
+.player-hand--draft .daily-draft-card {
+  user-select: none;
+  -webkit-user-select: none;
+}
+/* Draft 7 final click + compact centered fan */
+.player-hand--draft .player-hand__cards {
+  width: 560px !important;
+  max-width: 100% !important;
+  transform: translate(42px, -28px) !important;
+}
+.player-hand--draft .daily-draft-card--1 {
+  left: calc(50% - 180px) !important;
+}
+.player-hand--draft .daily-draft-card--2 {
+  left: calc(50% - 120px) !important;
+}
+.player-hand--draft .daily-draft-card--3 {
+  left: calc(50% - 60px) !important;
+}
+.player-hand--draft .daily-draft-card--4 {
+  left: 50% !important;
+}
+.player-hand--draft .daily-draft-card--5 {
+  left: calc(50% + 60px) !important;
+}
+.player-hand--draft .daily-draft-card--6 {
+  left: calc(50% + 120px) !important;
+}
+.player-hand--draft .daily-draft-card--7 {
+  left: calc(50% + 180px) !important;
+}
+/* Inner card không tự xử lý click trong draft; wrapper article xử lý qua delegation */
+.player-hand--draft .daily-draft-card {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+.player-hand--draft .daily-draft-card > .hand-card,
+.player-hand--draft .daily-draft-card > .hand-card * {
+  pointer-events: none !important;
+}
+/* Khi không còn dealing/pass thì đảm bảo card nhận click */
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card {
+  pointer-events: auto !important;
+}
+/* Draft 7 responsive-center by remaining card count */
+.player-hand--draft .player-hand__cards {
+  width: 520px !important;
+  max-width: 100% !important;
+  transform: translate(82px, -28px) !important;
+}
+/* 7 cards */
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--7) .daily-draft-card--1 {
+  left: calc(50% - 180px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--7) .daily-draft-card--2 {
+  left: calc(50% - 120px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--7) .daily-draft-card--3 {
+  left: calc(50% - 60px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--7) .daily-draft-card--4 {
+  left: 50% !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--7) .daily-draft-card--5 {
+  left: calc(50% + 60px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--7) .daily-draft-card--6 {
+  left: calc(50% + 120px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--7) .daily-draft-card--7 {
+  left: calc(50% + 180px) !important;
+}
+/* 6 cards */
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--6):not(:has(.daily-draft-card--7)) .daily-draft-card--1 {
+  left: calc(50% - 150px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--6):not(:has(.daily-draft-card--7)) .daily-draft-card--2 {
+  left: calc(50% - 90px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--6):not(:has(.daily-draft-card--7)) .daily-draft-card--3 {
+  left: calc(50% - 30px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--6):not(:has(.daily-draft-card--7)) .daily-draft-card--4 {
+  left: calc(50% + 30px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--6):not(:has(.daily-draft-card--7)) .daily-draft-card--5 {
+  left: calc(50% + 90px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--6):not(:has(.daily-draft-card--7)) .daily-draft-card--6 {
+  left: calc(50% + 150px) !important;
+}
+/* 5 cards */
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--5):not(:has(.daily-draft-card--6)) .daily-draft-card--1 {
+  left: calc(50% - 120px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--5):not(:has(.daily-draft-card--6)) .daily-draft-card--2 {
+  left: calc(50% - 60px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--5):not(:has(.daily-draft-card--6)) .daily-draft-card--3 {
+  left: 50% !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--5):not(:has(.daily-draft-card--6)) .daily-draft-card--4 {
+  left: calc(50% + 60px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--5):not(:has(.daily-draft-card--6)) .daily-draft-card--5 {
+  left: calc(50% + 120px) !important;
+}
+/* 4 cards */
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--4):not(:has(.daily-draft-card--5)) .daily-draft-card--1 {
+  left: calc(50% - 90px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--4):not(:has(.daily-draft-card--5)) .daily-draft-card--2 {
+  left: calc(50% - 30px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--4):not(:has(.daily-draft-card--5)) .daily-draft-card--3 {
+  left: calc(50% + 30px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--4):not(:has(.daily-draft-card--5)) .daily-draft-card--4 {
+  left: calc(50% + 90px) !important;
+}
+/* 3 cards */
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--3):not(:has(.daily-draft-card--4)) .daily-draft-card--1 {
+  left: calc(50% - 60px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--3):not(:has(.daily-draft-card--4)) .daily-draft-card--2 {
+  left: 50% !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--3):not(:has(.daily-draft-card--4)) .daily-draft-card--3 {
+  left: calc(50% + 60px) !important;
+}
+/* 2 cards at final return: center before flying to deck */
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--2):not(:has(.daily-draft-card--3)) .daily-draft-card--1 {
+  left: calc(50% - 34px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--2):not(:has(.daily-draft-card--3)) .daily-draft-card--2 {
+  left: calc(50% + 34px) !important;
+}
+/* Keep selected lift centered with dynamic positions */
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--selected,
+.player-hand--draft:not(.player-hand--dealing):not(.is-dealing) .daily-draft-card--selected:hover {
+  transform: translateX(-50%) translateY(-58px) rotate(0deg) scale(1.055) !important;
+}
+/* Stronger final pass: gather first, then fly to deck */
+.player-hand--draft .player-hand__cards.is-passing .daily-draft-card:not(.daily-draft-card--selected) {
+  pointer-events: none !important;
+  animation: draftFinalGatherThenDeck 0.98s cubic-bezier(0.17, 0.82, 0.24, 1) forwards !important;
+}
+@keyframes draftFinalGatherThenDeck {
+  0% {
+    opacity: 1;
+  }
+  28% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-28px) rotate(0deg) scale(0.92);
+  }
+  52% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(90px, -70px, 0) rotate(8deg) scale(0.78);
+  }
+  82% {
+    opacity: 0.72;
+    transform: translateX(-50%) translate3d(500px, -120px, 0) rotate(18deg) scale(0.48);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(690px, -138px, 0) rotate(26deg) scale(0.34);
+  }
+}
+/* Draft 7 final position polish: compact, centered, not covering resource orbs */
+.player-hand--draft .player-hand__cards {
+  width: 500px !important;
+  max-width: 100% !important;
+  transform: translate(24px, -72px) !important;
+}
+/* 7 cards */
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--7) .daily-draft-card--1 {
+  left: calc(50% - 150px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--7) .daily-draft-card--2 {
+  left: calc(50% - 100px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--7) .daily-draft-card--3 {
+  left: calc(50% - 50px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--7) .daily-draft-card--4 {
+  left: 50% !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--7) .daily-draft-card--5 {
+  left: calc(50% + 50px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--7) .daily-draft-card--6 {
+  left: calc(50% + 100px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--7) .daily-draft-card--7 {
+  left: calc(50% + 150px) !important;
+}
+/* 6 cards */
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--6):not(:has(.daily-draft-card--7)) .daily-draft-card--1 {
+  left: calc(50% - 125px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--6):not(:has(.daily-draft-card--7)) .daily-draft-card--2 {
+  left: calc(50% - 75px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--6):not(:has(.daily-draft-card--7)) .daily-draft-card--3 {
+  left: calc(50% - 25px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--6):not(:has(.daily-draft-card--7)) .daily-draft-card--4 {
+  left: calc(50% + 25px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--6):not(:has(.daily-draft-card--7)) .daily-draft-card--5 {
+  left: calc(50% + 75px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--6):not(:has(.daily-draft-card--7)) .daily-draft-card--6 {
+  left: calc(50% + 125px) !important;
+}
+/* 5 cards */
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--5):not(:has(.daily-draft-card--6)) .daily-draft-card--1 {
+  left: calc(50% - 100px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--5):not(:has(.daily-draft-card--6)) .daily-draft-card--2 {
+  left: calc(50% - 50px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--5):not(:has(.daily-draft-card--6)) .daily-draft-card--3 {
+  left: 50% !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--5):not(:has(.daily-draft-card--6)) .daily-draft-card--4 {
+  left: calc(50% + 50px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--5):not(:has(.daily-draft-card--6)) .daily-draft-card--5 {
+  left: calc(50% + 100px) !important;
+}
+/* 4 cards */
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--4):not(:has(.daily-draft-card--5)) .daily-draft-card--1 {
+  left: calc(50% - 75px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--4):not(:has(.daily-draft-card--5)) .daily-draft-card--2 {
+  left: calc(50% - 25px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--4):not(:has(.daily-draft-card--5)) .daily-draft-card--3 {
+  left: calc(50% + 25px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--4):not(:has(.daily-draft-card--5)) .daily-draft-card--4 {
+  left: calc(50% + 75px) !important;
+}
+/* 3 cards */
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--3):not(:has(.daily-draft-card--4)) .daily-draft-card--1 {
+  left: calc(50% - 50px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--3):not(:has(.daily-draft-card--4)) .daily-draft-card--2 {
+  left: 50% !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--3):not(:has(.daily-draft-card--4)) .daily-draft-card--3 {
+  left: calc(50% + 50px) !important;
+}
+/* 2 cards */
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--2):not(:has(.daily-draft-card--3)) .daily-draft-card--1 {
+  left: calc(50% - 28px) !important;
+}
+.player-hand--draft .player-hand__cards:has(.daily-draft-card--2):not(:has(.daily-draft-card--3)) .daily-draft-card--2 {
+  left: calc(50% + 28px) !important;
+}
+/* Final return: 2 lá gom sát lại rồi mới bay về deck */
+.player-hand--draft .player-hand__cards.is-passing .daily-draft-card:not(.daily-draft-card--selected) {
+  pointer-events: none !important;
+  animation: draftGatherThenFlyDeckPolished 1.02s cubic-bezier(0.17, 0.82, 0.24, 1) forwards !important;
+}
+@keyframes draftGatherThenFlyDeckPolished {
+  0% {
+    opacity: 1;
+  }
+  28% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-30px) rotate(0deg) scale(0.92);
+  }
+  52% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(86px, -74px, 0) rotate(8deg) scale(0.78);
+  }
+  82% {
+    opacity: 0.72;
+    transform: translateX(-50%) translate3d(470px, -122px, 0) rotate(18deg) scale(0.48);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(650px, -140px, 0) rotate(26deg) scale(0.34);
+  }
+}
+/* Restore planning hand deal animation after draft */
+.player-hand.player-hand--dealing:not(.player-hand--draft) .hand-card {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+  animation-duration: 1.28s !important;
+  animation-timing-function: cubic-bezier(0.16, 0.9, 0.24, 1) !important;
+  animation-fill-mode: both !important;
+  will-change: transform, opacity !important;
+}
+.player-hand.player-hand--dealing:not(.player-hand--draft) .hand-card--fan-1 {
+  animation-name: planningDealRestore1 !important;
+  animation-delay: 0ms !important;
+  z-index: 101 !important;
+}
+.player-hand.player-hand--dealing:not(.player-hand--draft) .hand-card--fan-2 {
+  animation-name: planningDealRestore2 !important;
+  animation-delay: 100ms !important;
+  z-index: 102 !important;
+}
+.player-hand.player-hand--dealing:not(.player-hand--draft) .hand-card--fan-3 {
+  animation-name: planningDealRestore3 !important;
+  animation-delay: 200ms !important;
+  z-index: 103 !important;
+}
+.player-hand.player-hand--dealing:not(.player-hand--draft) .hand-card--fan-4 {
+  animation-name: planningDealRestore4 !important;
+  animation-delay: 300ms !important;
+  z-index: 102 !important;
+}
+.player-hand.player-hand--dealing:not(.player-hand--draft) .hand-card--fan-5 {
+  animation-name: planningDealRestore5 !important;
+  animation-delay: 400ms !important;
+  z-index: 101 !important;
+}
+@keyframes planningDealRestore1 {
+  0% {
+    opacity: 0;
+    transform: translate3d(610px, -118px, 0) rotate(24deg) scale(0.62);
+  }
+  18% {
+    opacity: 1;
+  }
+  65% {
+    transform: translate3d(155px, -72px, 0) rotate(-20deg) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, -2px, 0) rotate(-15deg) scale(1);
+  }
+}
+@keyframes planningDealRestore2 {
+  0% {
+    opacity: 0;
+    transform: translate3d(520px, -120px, 0) rotate(18deg) scale(0.62);
+  }
+  18% {
+    opacity: 1;
+  }
+  65% {
+    transform: translate3d(118px, -78px, 0) rotate(-10deg) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, -7px, 0) rotate(-7deg) scale(1);
+  }
+}
+@keyframes planningDealRestore3 {
+  0% {
+    opacity: 0;
+    transform: translate3d(430px, -122px, 0) rotate(8deg) scale(0.62);
+  }
+  18% {
+    opacity: 1;
+  }
+  65% {
+    transform: translate3d(82px, -84px, 0) rotate(0deg) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, -10px, 0) rotate(0deg) scale(1);
+  }
+}
+@keyframes planningDealRestore4 {
+  0% {
+    opacity: 0;
+    transform: translate3d(340px, -120px, 0) rotate(-6deg) scale(0.62);
+  }
+  18% {
+    opacity: 1;
+  }
+  65% {
+    transform: translate3d(46px, -78px, 0) rotate(10deg) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, -7px, 0) rotate(7deg) scale(1);
+  }
+}
+@keyframes planningDealRestore5 {
+  0% {
+    opacity: 0;
+    transform: translate3d(250px, -118px, 0) rotate(-16deg) scale(0.62);
+  }
+  18% {
+    opacity: 1;
+  }
+  65% {
+    transform: translate3d(14px, -72px, 0) rotate(20deg) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, -2px, 0) rotate(15deg) scale(1);
+  }
+}
+/* =========================================
+   DRAFT RETURN POLISH + STABLE PLANNING DEAL
+   ========================================= */
+/*
+  Draft return:
+  - Các lá còn lại gom về một cụm trước.
+  - Cụm bài bay về deck.
+  - Không fade giữa đường; chỉ biến mất khi đã chui vào deck.
+  - Dùng tọa độ thật do activateDraftPassAnimation() set bằng CSS variables.
+*/
+.player-hand--draft .player-hand__cards.is-passing.pass-active .daily-draft-card:not(.daily-draft-card--selected) {
+  pointer-events: none !important;
+  opacity: 1 !important;
+  animation: draftGatherStackThenDeck 1.08s cubic-bezier(0.17, 0.82, 0.24, 1) forwards !important;
+  will-change: transform, opacity !important;
+}
+/* Lá đã chọn không bay về deck, chỉ nhấc nhẹ lên rồi tắt */
+.player-hand--draft .player-hand__cards.is-passing.pass-active .daily-draft-card--selected {
+  pointer-events: none !important;
+  animation: draftChosenLiftOut 0.62s ease forwards !important;
+}
+@keyframes draftGatherStackThenDeck {
+  0% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(var(--gather-x, 0px), var(--gather-y, -28px), 0) rotate(var(--gather-r, 0deg)) scale(0.94);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(var(--gather-x, 0px), var(--gather-y, -28px), 0) rotate(var(--gather-r, 0deg)) scale(0.9);
+  }
+  72% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(var(--arc1-x, 160px), var(--arc1-y, -150px), 0) rotate(10deg) scale(0.72);
+  }
+  92% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(var(--deck-in-x, 620px), var(--deck-in-y, -120px), 0) rotate(var(--deck-r, 16deg)) scale(0.42);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(var(--deck-in-x, 620px), var(--deck-in-y, -120px), 0) rotate(var(--deck-r, 16deg)) scale(0.3);
+  }
+}
+@keyframes draftChosenLiftOut {
+  0% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-64px) rotate(0deg) scale(1.04);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-92px) rotate(-4deg) scale(0.82);
+  }
+}
+/*
+  Planning deal ổn định:
+  Không dùng lại trạng thái của draft. Chỉ card planning thật chạy animation.
+*/
+.player-hand.player-hand--dealing:not(.player-hand--draft) .player-hand__cards {
+  position: relative !important;
+  overflow: visible !important;
+  z-index: 5000 !important;
+}
+.player-hand.player-hand--dealing:not(.player-hand--draft) .hand-card {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+  transition: none !important;
+  animation-duration: 1.26s !important;
+  animation-timing-function: cubic-bezier(0.16, 0.9, 0.24, 1) !important;
+  animation-fill-mode: both !important;
+  will-change: transform, opacity !important;
+}
+.player-hand.player-hand--dealing:not(.player-hand--draft) .hand-card--fan-1 {
+  animation-name: planningDealStable1 !important;
+  animation-delay: 0ms !important;
+  z-index: 101 !important;
+}
+.player-hand.player-hand--dealing:not(.player-hand--draft) .hand-card--fan-2 {
+  animation-name: planningDealStable2 !important;
+  animation-delay: 95ms !important;
+  z-index: 102 !important;
+}
+.player-hand.player-hand--dealing:not(.player-hand--draft) .hand-card--fan-3 {
+  animation-name: planningDealStable3 !important;
+  animation-delay: 190ms !important;
+  z-index: 103 !important;
+}
+.player-hand.player-hand--dealing:not(.player-hand--draft) .hand-card--fan-4 {
+  animation-name: planningDealStable4 !important;
+  animation-delay: 285ms !important;
+  z-index: 102 !important;
+}
+.player-hand.player-hand--dealing:not(.player-hand--draft) .hand-card--fan-5 {
+  animation-name: planningDealStable5 !important;
+  animation-delay: 380ms !important;
+  z-index: 101 !important;
+}
+@keyframes planningDealStable1 {
+  0% {
+    opacity: 0;
+    transform: translate3d(600px, -112px, 0) rotate(24deg) scale(0.62);
+  }
+  16% {
+    opacity: 1;
+  }
+  66% {
+    opacity: 1;
+    transform: translate3d(150px, -70px, 0) rotate(-18deg) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, -2px, 0) rotate(-15deg) scale(1);
+  }
+}
+@keyframes planningDealStable2 {
+  0% {
+    opacity: 0;
+    transform: translate3d(510px, -116px, 0) rotate(18deg) scale(0.62);
+  }
+  16% {
+    opacity: 1;
+  }
+  66% {
+    opacity: 1;
+    transform: translate3d(112px, -76px, 0) rotate(-9deg) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, -7px, 0) rotate(-7deg) scale(1);
+  }
+}
+@keyframes planningDealStable3 {
+  0% {
+    opacity: 0;
+    transform: translate3d(420px, -120px, 0) rotate(8deg) scale(0.62);
+  }
+  16% {
+    opacity: 1;
+  }
+  66% {
+    opacity: 1;
+    transform: translate3d(78px, -82px, 0) rotate(0deg) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, -10px, 0) rotate(0deg) scale(1);
+  }
+}
+@keyframes planningDealStable4 {
+  0% {
+    opacity: 0;
+    transform: translate3d(330px, -116px, 0) rotate(-6deg) scale(0.62);
+  }
+  16% {
+    opacity: 1;
+  }
+  66% {
+    opacity: 1;
+    transform: translate3d(42px, -76px, 0) rotate(9deg) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, -7px, 0) rotate(7deg) scale(1);
+  }
+}
+@keyframes planningDealStable5 {
+  0% {
+    opacity: 0;
+    transform: translate3d(240px, -112px, 0) rotate(-16deg) scale(0.62);
+  }
+  16% {
+    opacity: 1;
+  }
+  66% {
+    opacity: 1;
+    transform: translate3d(12px, -70px, 0) rotate(18deg) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, -2px, 0) rotate(15deg) scale(1);
+  }
+}
+/* =========================================
+   DRAFT RETURN ARC POLISH - SLAY THE SPIRE STYLE
+   ========================================= */
+/*
+  Chỉnh lại animation trả bài khi draft:
+  - Gom bài gọn hơn, không xòe thành hình kỳ.
+  - Gom thành cụm nhỏ ở giữa fan.
+  - Bay vòng cung cao hơn.
+  - Không biến mất giữa đường; chỉ fade khi đã gần/đã vào deck.
+*/
+.player-hand--draft .player-hand__cards.is-passing.pass-active .daily-draft-card:not(.daily-draft-card--selected) {
+  pointer-events: none !important;
+  opacity: 1 !important;
+  animation: draftReturnCompactHighArc 1.12s cubic-bezier(0.17, 0.82, 0.24, 1) forwards !important;
+  will-change: transform, opacity !important;
+}
+.player-hand--draft .player-hand__cards.is-passing.pass-active .daily-draft-card--selected {
+  pointer-events: none !important;
+  animation: draftChosenLiftOutCompact 0.58s ease forwards !important;
+}
+@keyframes draftReturnCompactHighArc {
+  0% {
+    opacity: 1;
+  }
+  /* Gom nhanh về cụm nhỏ, scale gần nhau hơn */
+  24% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(calc(var(--gather-x, 0px) * 0.82), calc(var(--gather-y, -28px) * 0.86), 0) rotate(calc(var(--gather-r, 0deg) * 0.35)) scale(0.9);
+  }
+  /* Dừng rất ngắn ở cụm bài, tạo cảm giác gom lại trước khi bay */
+  38% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(calc(var(--gather-x, 0px) * 0.82), calc(var(--gather-y, -28px) * 0.86), 0) rotate(calc(var(--gather-r, 0deg) * 0.18)) scale(0.86);
+  }
+  /* Vòng cung cao hơn kiểu Slay the Spire */
+  64% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(var(--arc1-x, 160px), calc(var(--arc1-y, -150px) - 90px), 0) rotate(12deg) scale(0.7);
+  }
+  84% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(var(--arc2-x, 420px), calc(var(--arc2-y, -180px) - 70px), 0) rotate(20deg) scale(0.54);
+  }
+  /* Gần chui vào deck mới bắt đầu fade */
+  96% {
+    opacity: 0.88;
+    transform: translateX(-50%) translate3d(var(--deck-in-x, 620px), calc(var(--deck-in-y, -120px) - 8px), 0) rotate(var(--deck-r, 16deg)) scale(0.38);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(var(--deck-in-x, 620px), var(--deck-in-y, -120px), 0) rotate(var(--deck-r, 16deg)) scale(0.28);
+  }
+}
+@keyframes draftChosenLiftOutCompact {
+  0% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-62px) rotate(0deg) scale(1.04);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-90px) rotate(-4deg) scale(0.82);
+  }
+}
+/* =========================================
+   DRAFT RETURN FADE SMOOTHER
+   ========================================= */
+/*
+  Chỉnh fade cho draft return:
+  - Bắt đầu fade sớm hơn từ đoạn bay vòng cung.
+  - Tới miệng deck là gần như biến mất.
+  - Giảm lag bằng opacity/transform đơn giản hơn, bỏ bớt nhiều calc phức tạp ở đoạn cuối.
+*/
+.player-hand--draft .player-hand__cards.is-passing.pass-active .daily-draft-card:not(.daily-draft-card--selected) {
+  animation: draftReturnSmoothFadeArc 1.02s cubic-bezier(0.18, 0.82, 0.24, 1) forwards !important;
+  will-change: transform, opacity !important;
+  backface-visibility: hidden !important;
+  transform-style: flat !important;
+}
+@keyframes draftReturnSmoothFadeArc {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  /* Gom bài gọn lại */
+  24% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(calc(var(--gather-x, 0px) * 0.78), calc(var(--gather-y, -28px) * 0.82), 0) rotate(calc(var(--gather-r, 0deg) * 0.22)) scale(0.88);
+  }
+  /* Chụm cụm rất ngắn */
+  36% {
+    opacity: 0.96;
+    transform: translateX(-50%) translate3d(calc(var(--gather-x, 0px) * 0.78), calc(var(--gather-y, -28px) * 0.82), 0) rotate(0deg) scale(0.84);
+  }
+  /* Bắt đầu bay vòng cung và bắt đầu fade sớm */
+  58% {
+    opacity: 0.72;
+    transform: translateX(-50%) translate3d(var(--arc1-x, 160px), calc(var(--arc1-y, -150px) - 86px), 0) rotate(10deg) scale(0.66);
+  }
+  /* Đang rơi về deck, đã mờ rõ */
+  78% {
+    opacity: 0.34;
+    transform: translateX(-50%) translate3d(var(--arc2-x, 420px), calc(var(--arc2-y, -180px) - 48px), 0) rotate(18deg) scale(0.5);
+  }
+  /* Tới gần miệng deck là gần biến mất */
+  92% {
+    opacity: 0.08;
+    transform: translateX(-50%) translate3d(var(--deck-in-x, 620px), calc(var(--deck-in-y, -120px) - 10px), 0) rotate(var(--deck-r, 16deg)) scale(0.36);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(var(--deck-in-x, 620px), var(--deck-in-y, -120px), 0) rotate(var(--deck-r, 16deg)) scale(0.3);
+  }
+}
+/* =========================================
+   DRAFT RETURN VISIBLE FADE FIX
+   ========================================= */
+/*
+  Lý do fade trước đó khó thấy:
+  - JS đổi pool/phase gần sát thời lượng animation.
+  - Đoạn opacity giảm nằm quá muộn trong lúc lá đang bay rất nhanh.
+  Bản này:
+  - Kéo animation dài hơn.
+  - Fade bắt đầu từ 42%.
+  - Đến 82% đã gần biến mất.
+  - JS đã được tăng timeout để không cắt mất đoạn fade.
+*/
+.player-hand--draft .player-hand__cards.is-passing.pass-active .daily-draft-card:not(.daily-draft-card--selected) {
+  animation: draftReturnClearlyFadeArc 1.38s cubic-bezier(0.18, 0.82, 0.24, 1) forwards !important;
+  opacity: 1;
+  will-change: transform, opacity !important;
+  backface-visibility: hidden !important;
+  transform-style: flat !important;
+}
+/* Đảm bảo opacity của wrapper ảnh hưởng rõ lên toàn bộ card con */
+.player-hand--draft .player-hand__cards.is-passing.pass-active .daily-draft-card:not(.daily-draft-card--selected) > .hand-card {
+  opacity: inherit !important;
+}
+@keyframes draftReturnClearlyFadeArc {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  /* Gom bài gọn lại */
+  22% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(calc(var(--gather-x, 0px) * 0.78), calc(var(--gather-y, -28px) * 0.82), 0) rotate(calc(var(--gather-r, 0deg) * 0.18)) scale(0.88);
+  }
+  /* Cụm bài chuẩn bị bay */
+  34% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(calc(var(--gather-x, 0px) * 0.78), calc(var(--gather-y, -28px) * 0.82), 0) rotate(0deg) scale(0.84);
+  }
+  /* Bắt đầu fade rõ khi bay lên vòng cung */
+  48% {
+    opacity: 0.62;
+    transform: translateX(-50%) translate3d(var(--arc1-x, 160px), calc(var(--arc1-y, -150px) - 90px), 0) rotate(10deg) scale(0.66);
+  }
+  /* Mờ mạnh hơn trên đường rơi về deck */
+  66% {
+    opacity: 0.28;
+    transform: translateX(-50%) translate3d(var(--arc2-x, 420px), calc(var(--arc2-y, -180px) - 58px), 0) rotate(18deg) scale(0.5);
+  }
+  /* Gần deck: gần như mất */
+  82% {
+    opacity: 0.08;
+    transform: translateX(-50%) translate3d(var(--deck-in-x, 620px), calc(var(--deck-in-y, -120px) - 12px), 0) rotate(var(--deck-r, 16deg)) scale(0.36);
+  }
+  /* Chạm deck: biến mất hẳn */
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(var(--deck-in-x, 620px), var(--deck-in-y, -120px), 0) rotate(var(--deck-r, 16deg)) scale(0.28);
+  }
+}
+/* =========================================
+   DRAFT RETURN DECK INSERT FIX
+   ========================================= */
+/*
+  Fix điểm biến mất của bài trả về deck:
+  - Bài không fade/mất ở đường ngang giữa deck nữa.
+  - Bài bay thấp hơn, chui vào phần thân deck.
+  - Giữ opacity rõ tới gần deck, rồi fade nhanh khi đã vào deck.
+*/
+.player-hand--draft .player-hand__cards.is-passing.pass-active .daily-draft-card:not(.daily-draft-card--selected) {
+  animation: draftReturnIntoDeckVisible 1.3s cubic-bezier(0.18, 0.82, 0.24, 1) forwards !important;
+  opacity: 1 !important;
+  will-change: transform, opacity !important;
+  backface-visibility: hidden !important;
+  transform-style: flat !important;
+}
+.player-hand--draft .player-hand__cards.is-passing.pass-active .daily-draft-card:not(.daily-draft-card--selected) > .hand-card {
+  opacity: inherit !important;
+}
+@keyframes draftReturnIntoDeckVisible {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  /* Gom gọn về cụm */
+  24% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(calc(var(--gather-x, 0px) * 0.78), calc(var(--gather-y, -28px) * 0.82), 0) rotate(calc(var(--gather-r, 0deg) * 0.18)) scale(0.88);
+  }
+  /* Cụm bài dừng nhẹ */
+  36% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(calc(var(--gather-x, 0px) * 0.78), calc(var(--gather-y, -28px) * 0.82), 0) rotate(0deg) scale(0.84);
+  }
+  /* Bay vòng cung cao */
+  58% {
+    opacity: 0.96;
+    transform: translateX(-50%) translate3d(var(--arc1-x, 160px), calc(var(--arc1-y, -150px) - 92px), 0) rotate(10deg) scale(0.66);
+  }
+  /* Rơi về deck, vẫn còn nhìn rõ */
+  78% {
+    opacity: 0.82;
+    transform: translateX(-50%) translate3d(var(--arc2-x, 420px), calc(var(--arc2-y, -180px) - 46px), 0) rotate(18deg) scale(0.5);
+  }
+  /*
+    Đã tới thân deck: bắt đầu fade nhanh.
+    Y + 18px để bài đi xuống dưới đường ngang người dùng đánh dấu.
+  */
+  92% {
+    opacity: 0.42;
+    transform: translateX(-50%) translate3d(var(--deck-in-x, 620px), calc(var(--deck-in-y, -120px) + 18px), 0) rotate(var(--deck-r, 16deg)) scale(0.36);
+  }
+  98% {
+    opacity: 0.1;
+    transform: translateX(-50%) translate3d(var(--deck-in-x, 620px), calc(var(--deck-in-y, -120px) + 30px), 0) rotate(var(--deck-r, 16deg)) scale(0.3);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(var(--deck-in-x, 620px), calc(var(--deck-in-y, -120px) + 36px), 0) rotate(var(--deck-r, 16deg)) scale(0.26);
+  }
+}
+/* =========================================
+   DRAFT RETURN FADE OUT AT DECK MIDLINE
+   ========================================= */
+/*
+  User target:
+  - Khi bài bay tới đường ngang giữa deck thì phải biến mất hoàn toàn.
+  - Không bay xuống dưới đường đó nữa.
+  - Fade bắt đầu trước khi tới deck, tới line là opacity = 0.
+*/
+.player-hand--draft .player-hand__cards.is-passing.pass-active .daily-draft-card:not(.daily-draft-card--selected) {
+  animation: draftReturnFadeOutAtDeckLine 1.22s cubic-bezier(0.18, 0.82, 0.24, 1) forwards !important;
+  opacity: 1 !important;
+  will-change: transform, opacity !important;
+  backface-visibility: hidden !important;
+  transform-style: flat !important;
+}
+.player-hand--draft .player-hand__cards.is-passing.pass-active .daily-draft-card:not(.daily-draft-card--selected) > .hand-card {
+  opacity: inherit !important;
+}
+@keyframes draftReturnFadeOutAtDeckLine {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  /* Gom gọn */
+  24% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(calc(var(--gather-x, 0px) * 0.78), calc(var(--gather-y, -28px) * 0.82), 0) rotate(calc(var(--gather-r, 0deg) * 0.18)) scale(0.88);
+  }
+  /* Cụm bài dừng nhẹ */
+  36% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(calc(var(--gather-x, 0px) * 0.78), calc(var(--gather-y, -28px) * 0.82), 0) rotate(0deg) scale(0.84);
+  }
+  /* Bay vòng cung cao, bắt đầu fade */
+  56% {
+    opacity: 0.78;
+    transform: translateX(-50%) translate3d(var(--arc1-x, 160px), calc(var(--arc1-y, -150px) - 88px), 0) rotate(10deg) scale(0.66);
+  }
+  /* Rơi về deck, mờ rõ */
+  74% {
+    opacity: 0.34;
+    transform: translateX(-50%) translate3d(var(--arc2-x, 420px), calc(var(--arc2-y, -180px) - 52px), 0) rotate(18deg) scale(0.5);
+  }
+  /* Gần line giữa deck: gần mất */
+  90% {
+    opacity: 0.08;
+    transform: translateX(-50%) translate3d(var(--deck-in-x, 620px), calc(var(--deck-in-y, -120px) - 8px), 0) rotate(var(--deck-r, 16deg)) scale(0.36);
+  }
+  /* Đúng line giữa deck: biến mất hoàn toàn */
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(var(--deck-in-x, 620px), var(--deck-in-y, -120px), 0) rotate(var(--deck-r, 16deg)) scale(0.28);
+  }
+}
+/* =========================================
+   ABSOLUTE LAST OVERRIDE - DRAFT RETURN LINE FADE V2
+   ========================================= */
+/*
+  Nếu không thấy thay đổi, nguyên nhân thường là:
+  - build/client.css chưa được compile lại, hoặc
+  - browser đang cache CSS cũ.
+  Block này đặt cuối file, tên keyframe mới hoàn toàn để kiểm tra dễ hơn.
+*/
+.player-hand--draft .player-hand__cards.is-passing.pass-active .draft-deal-slot:not(.daily-draft-card--selected),
+.player-hand--draft .player-hand__cards.is-passing.pass-active .daily-draft-card:not(.daily-draft-card--selected) {
+  animation-name: draftReturnFadeAtDeckLineV2 !important;
+  animation-duration: 1.35s !important;
+  animation-timing-function: cubic-bezier(0.18, 0.82, 0.24, 1) !important;
+  animation-fill-mode: forwards !important;
+  opacity: 1 !important;
+  will-change: transform, opacity !important;
+  backface-visibility: hidden !important;
+  transform-style: flat !important;
+}
+.player-hand--draft .player-hand__cards.is-passing.pass-active .draft-deal-slot:not(.daily-draft-card--selected) > .hand-card,
+.player-hand--draft .player-hand__cards.is-passing.pass-active .daily-draft-card:not(.daily-draft-card--selected) > .hand-card {
+  opacity: 1 !important;
+}
+/* Deck receiving nhỏ để nhìn ra CSS mới đã chạy */
+.deck-pile-panel.deck-receiving .deck-card-stack {
+  filter: brightness(1.05) saturate(1.08);
+}
+@keyframes draftReturnFadeAtDeckLineV2 {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  22% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(calc(var(--gather-x, 0px) * 0.72), calc(var(--gather-y, -28px) * 0.78), 0) rotate(calc(var(--gather-r, 0deg) * 0.14)) scale(0.86);
+  }
+  34% {
+    opacity: 1;
+    transform: translateX(-50%) translate3d(calc(var(--gather-x, 0px) * 0.72), calc(var(--gather-y, -28px) * 0.78), 0) rotate(0deg) scale(0.82);
+  }
+  /* Fade bắt đầu rất rõ từ đây */
+  52% {
+    opacity: 0.55;
+    transform: translateX(-50%) translate3d(var(--arc1-x, 160px), calc(var(--arc1-y, -150px) - 96px), 0) rotate(10deg) scale(0.62);
+  }
+  68% {
+    opacity: 0.22;
+    transform: translateX(-50%) translate3d(var(--arc2-x, 420px), calc(var(--arc2-y, -180px) - 58px), 0) rotate(18deg) scale(0.46);
+  }
+  82% {
+    opacity: 0.06;
+    transform: translateX(-50%) translate3d(var(--deck-in-x, 620px), calc(var(--deck-in-y, -120px) - 16px), 0) rotate(var(--deck-r, 16deg)) scale(0.34);
+  }
+  /* Tới đường giữa deck là mất hẳn */
+  92% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(var(--deck-in-x, 620px), var(--deck-in-y, -120px), 0) rotate(var(--deck-r, 16deg)) scale(0.28);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translate3d(var(--deck-in-x, 620px), var(--deck-in-y, -120px), 0) rotate(var(--deck-r, 16deg)) scale(0.28);
+  }
+}
+/* =========================================
+   FLOWCHART EVENT BADGE OVERLAP FIX
+   ========================================= */
+/*
+  Fix badge event trong flowchart bị đè với nút Combo:
+  - Không để event badge nằm trong luồng dọc làm chiếm chỗ dưới cùng nữa.
+  - Đưa event badge lên góc trên/phải của card flow.
+  - Combo giữ nguyên ở đáy card.
+  - Áp dụng cho tất cả event: kẹt xe, mưa giông, khuyến mãi, khoảng cách.
+*/
+.flow-node__card {
+  position: relative !important;
+  overflow: visible !important;
+  padding-bottom: 22px !important;
+}
+.flow-node__event-badge {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  left: auto !important;
+  bottom: auto !important;
+  z-index: 8 !important;
+  margin: 0 !important;
+  max-width: 74px !important;
+  min-width: 0 !important;
+  height: 18px !important;
+  padding: 0 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  font-size: 7.2px !important;
+  line-height: 1 !important;
+  font-weight: 1000 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  box-shadow: 0 5px 10px rgba(127, 29, 29, 0.16) !important;
+  pointer-events: none !important;
+}
+/* Chừa chỗ cho badge event ở dòng tiêu đề để nó không che tên card */
+.flow-node--event-promo .flow-node__card h4,
+.flow-node--event-traffic .flow-node__card h4,
+.flow-node--event-storm .flow-node__card h4,
+.flow-node--event-distance .flow-node__card h4 {
+  padding-right: 76px !important;
+}
+/* Combo luôn nằm dưới cùng, event không được đè vào combo */
+.flow-node__badge {
+  z-index: 9 !important;
+  bottom: -8px !important;
+}
+/* Riêng khoảng cách label dài hơn, dùng chữ ngắn gọn và rộng vừa đủ */
+.flow-node--event-distance .flow-node__event-badge {
+  max-width: 86px !important;
+  font-size: 6.8px !important;
+}
+/* Màn thấp: badge nhỏ hơn nữa để không lấn nội dung */
+@media (max-height: 820px) {
+  .flow-node__card {
+    padding-bottom: 20px !important;
+  }
+  .flow-node__event-badge {
+    top: 6px !important;
+    right: 6px !important;
+    max-width: 66px !important;
+    height: 16px !important;
+    padding: 0 6px !important;
+    font-size: 6.4px !important;
+  }
+  .flow-node--event-promo .flow-node__card h4,
+  .flow-node--event-traffic .flow-node__card h4,
+  .flow-node--event-storm .flow-node__card h4,
+  .flow-node--event-distance .flow-node__card h4 {
+    padding-right: 68px !important;
+  }
+  .flow-node--event-distance .flow-node__event-badge {
+    max-width: 78px !important;
+    font-size: 6.2px !important;
+  }
+}
+/* =========================================
+   FLOWCHART EVENT + COMBO BOTTOM TAG LAYOUT
+   ========================================= */
+/*
+  Event tag không che tên địa điểm.
+  - Nếu chỉ có 1 tag: nằm giữa dưới card.
+  - Nếu có Event + Combo: chia đôi vị trí trái/phải ở dưới card.
+*/
+.flow-node__card {
+  position: relative !important;
+  overflow: visible !important;
+  padding-bottom: 26px !important;
+}
+/* Event badge chuyển xuống dưới, cùng hàng với combo */
+.flow-node__event-badge {
+  position: absolute !important;
+  top: auto !important;
+  right: auto !important;
+  left: 50% !important;
+  bottom: -8px !important;
+  transform: translateX(-50%) !important;
+  z-index: 10 !important;
+  margin: 0 !important;
+  max-width: 112px !important;
+  min-width: 0 !important;
+  height: 22px !important;
+  padding: 0 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  font-size: 8px !important;
+  line-height: 1 !important;
+  font-weight: 1000 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  box-shadow: 0 7px 14px rgba(127, 29, 29, 0.18) !important;
+  pointer-events: none !important;
+}
+/* Combo mặc định: nếu chỉ có combo thì ở giữa */
+.flow-node__badge {
+  position: absolute !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: -8px !important;
+  transform: translateX(-50%) !important;
+  z-index: 11 !important;
+  height: 22px !important;
+  padding: 0 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  pointer-events: none !important;
+}
+/* Có cả event + combo: chia đôi chỗ dưới card */
+.flow-node__card:has(.flow-node__event-badge):has(.flow-node__badge) .flow-node__event-badge {
+  left: 27% !important;
+  transform: translateX(-50%) !important;
+  max-width: 86px !important;
+  padding: 0 8px !important;
+  font-size: 7.2px !important;
+}
+.flow-node__card:has(.flow-node__event-badge):has(.flow-node__badge) .flow-node__badge {
+  left: 73% !important;
+  transform: translateX(-50%) !important;
+  max-width: 72px !important;
+  padding: 0 10px !important;
+}
+/* Chỉ có event, không có combo: event nằm giữa như combo */
+.flow-node__card:has(.flow-node__event-badge):not(:has(.flow-node__badge)) .flow-node__event-badge {
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  max-width: 112px !important;
+}
+/* Vì event không còn ở trên nên không chừa padding-right cho title nữa */
+.flow-node--event-promo .flow-node__card h4,
+.flow-node--event-traffic .flow-node__card h4,
+.flow-node--event-storm .flow-node__card h4,
+.flow-node--event-distance .flow-node__card h4 {
+  padding-right: 0 !important;
+}
+/* Màn thấp: thu nhỏ tag */
+@media (max-height: 820px) {
+  .flow-node__card {
+    padding-bottom: 24px !important;
+  }
+  .flow-node__event-badge,
+  .flow-node__badge {
+    height: 20px !important;
+    font-size: 6.8px !important;
+  }
+  .flow-node__card:has(.flow-node__event-badge):has(.flow-node__badge) .flow-node__event-badge {
+    left: 26% !important;
+    max-width: 78px !important;
+    font-size: 6.4px !important;
+  }
+  .flow-node__card:has(.flow-node__event-badge):has(.flow-node__badge) .flow-node__badge {
+    left: 74% !important;
+    max-width: 66px !important;
+    font-size: 6.4px !important;
+  }
 }
